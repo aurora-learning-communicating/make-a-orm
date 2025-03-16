@@ -15,7 +15,6 @@ import java.util.function.Supplier;
  * Result.from(() -> {
  *   Integer value = functionThrowsException();
  * }).ifErr(error -> System.out.println(error.getMessage()));;
- *
  * 什么？你这个闭包里调用的函数会抛出多种错误
  * 那需要你手动 try-catch 并抛出统一类型的 Exception 了
  */
@@ -28,24 +27,24 @@ public final class Result<T, E extends Throwable> {
             @SuppressWarnings("unchecked")
             E error = (E) e;
 
-            return Result.Err(error, e);
+            return Result.Err(error);
         }
     }
 
     public static <T, E extends Throwable> Result<T, E> Ok(@Nonnull T data) {
-        return new Result<>(data, null, null);
+        return new Result<>(data, null);
     }
 
-    public static <T, E extends Throwable> Result<T, E> Err(@Nonnull E error, @Nonnull Throwable cause) {
-        return new Result<>(null, error, cause);
+    public static <T, E extends Throwable> Result<T, E> Err(@Nonnull E error) {
+        return new Result<>(null, error);
     }
 
-    private static <T, E extends Throwable, U> Result<U, E> Err(@Nonnull Result<T, E> result, @Nonnull Throwable cause) {
+    private static <T, E extends Throwable, U> Result<U, E> Err(@Nonnull Result<T, E> result) {
         if (result.isOk()) {
             throw new UnsupportedException("cannot transform ok to error");
         }
 
-        return new Result<>(null, result.getError(), cause);
+        return new Result<>(null, result.getError());
     }
 
     @Nullable
@@ -54,22 +53,18 @@ public final class Result<T, E extends Throwable> {
     @Nullable
     public E error;
 
-    @Nullable
-    public Throwable cause;
-
-    private Result(@Nullable T data, @Nullable E error, @Nullable Throwable cause) {
+    private Result(@Nullable T data, @Nullable E error) {
         this.data = data;
         this.error = error;
-        this.cause = cause;
     }
 
     public boolean isOk() {
         return data != null;
-    };
+    }
 
     public boolean isErr() {
         return error != null;
-    };
+    }
 
     public void ifOk(@Nonnull Consumer<T> consumer) {
         if (isOk()) {
@@ -88,7 +83,7 @@ public final class Result<T, E extends Throwable> {
         if (isOk()) {
             return Result.Ok(function.apply(get()));
         } else {
-            return Result.Err(this.getError(), this.getCause());
+            return Result.Err(this.getError());
         }
     }
 
@@ -97,9 +92,9 @@ public final class Result<T, E extends Throwable> {
         if (isOk()) {
             return data;
         } else {
-            throw new UnsupportedException("cannot unwrap result err", this.getCause());
+            throw new UnsupportedException("cannot unwrap result err");
         }
-    };
+    }
 
     @Nonnull
     public T orElse(@Nonnull T value) {
@@ -123,15 +118,6 @@ public final class Result<T, E extends Throwable> {
     public E getError() {
         if (isErr()) {
             return error;
-        } else {
-            throw new UnsupportedException("cannot unwrap result ok");
-        }
-    }
-
-    @Nonnull
-    public Throwable getCause() {
-        if (isErr()) {
-            return cause;
         } else {
             throw new UnsupportedException("cannot unwrap result ok");
         }

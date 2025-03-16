@@ -11,6 +11,7 @@ public abstract class StringColumn extends Column<String> {
     @Nonnull
     @Override
     public String format(@Nonnull String value) {
-        return "'%s'".formatted(value);
+        String replacement = value.replace("'", "\\'");
+        return "'%s'".formatted(replacement);
     }
 }

@@ -3,6 +3,34 @@
 今天(2025-2-11)才知道可以写 CHANGELOG 来管理版本更新的信息，0.2.0 版本前都是对 ORM 的制作做一个探索
 这个版本以后开始进行重构，大规模更新
 
+## [v0.2.1] - 2025-3-17
+
+### 新增 功能
+
+#### 1. 某些特定字段的加减乘除操作
+
+[plus](file:./src/main/java/com/steiner/make_a_orm/column/trait/IPlusColumn.java)
+[minus](file:./src/main/java/com/steiner/make_a_orm/column/trait/IMinusColumn.java)
+[multi and div](file:./src/main/java/com/steiner/make_a_orm/column/trait/IMulDivColumn.java)
+
+有关日期类型的加减操作，还补充了 [时间单位](file:./src/main/java/com/steiner/make_a_orm/update/timeunit)
+
+#### 2. Update 两种表达式
+
+1. [ReassignExpression](file:./src/main/java/com/steiner/make_a_orm/update/ReassignExpression.java)
+   这种是像 `set column = column + 1` 这样的表达式，已经进行判空处理，无需担心字段为空
+2. [UpdateExpression](file:./src/main/java/com/steiner/make_a_orm/update/UpdateExpression.java)
+   这个是直接 `set column = value` 这样的表达式
+
+#### 3. insert returning 支持
+
+[InsertStatement executeInsertReturning](file:.//src/main/java/com/steiner/make_a_orm/insert/InsertStatement.java)
+
+#### 4. Table 的 delete 功能
+
+delete 并加上 where 语句
+
+
 ## [v0.2.0] - 2025-2-11
 
 ### 新增 字段
@@ -91,4 +119,7 @@
 - [ ] 测试 blob
 - [ ] 测试 check
 - [ ] 在 Table 中添加外键支持
-- [ ] 删除操作
+- [x] 删除操作
+- [ ] 枚举类型
+- [x] inplace expression
+- [ ] 联合主键 与 Query

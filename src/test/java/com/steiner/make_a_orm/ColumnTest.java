@@ -4,6 +4,7 @@ import com.mysql.cj.jdbc.Driver;
 import com.steiner.make_a_orm.column.Column;
 import com.steiner.make_a_orm.database.Database;
 import com.steiner.make_a_orm.impl.NumberCollectionTable;
+import com.steiner.make_a_orm.select.ResultRow;
 import com.steiner.make_a_orm.transaction.Transaction;
 import com.steiner.make_a_orm.utils.GlobalLogger;
 import com.steiner.make_a_orm.utils.SchemaUtils;
@@ -80,6 +81,33 @@ public class ColumnTest {
         });
 
     }
+
+    // TODO test if insert can return id
+    @Test
+    public void testNumericInsertReturning() {
+        Transaction.runWith(database, () -> {
+            ResultRow resultRow = numberCollectionTable.insertReturning(
+                    statement -> {},
+                    numberCollectionTable.id,
+                    numberCollectionTable.column1,
+                    numberCollectionTable.column2
+            );
+
+            int id = resultRow.get(numberCollectionTable.id);
+            System.out.println(resultRow.get(numberCollectionTable.column1));
+            System.out.println(resultRow.get(numberCollectionTable.column2));
+            System.out.println(id);
+        });
+
+    }
+
+    @Test
+    public void testNumericDeleteWithWhere() {
+        Transaction.runWith(database, () -> {
+            numberCollectionTable.deleteWhere(() -> numberCollectionTable.column1.equal(true));
+        });
+    }
+
 
     // TODO test where condition
     @Test

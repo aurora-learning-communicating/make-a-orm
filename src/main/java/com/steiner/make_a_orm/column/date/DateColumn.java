@@ -18,7 +18,9 @@ public final class DateColumn extends Column<java.sql.Date>
         ICompareDateColumn<java.sql.Date, DateColumn>,
         INullOrNotColumn<java.sql.Date, DateColumn>,
         IBetweenColumn<java.sql.Date, DateColumn>,
-        IInListColumn<java.sql.Date, DateColumn> {
+        IInListColumn<java.sql.Date, DateColumn>,
+        IPlusColumn<java.sql.Date, DateColumn>,
+        IMinusColumn<java.sql.Date, DateColumn> {
     public DateColumn(String name) {
         super(name);
     }

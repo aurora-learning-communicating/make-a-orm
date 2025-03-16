@@ -13,7 +13,8 @@ public final class CharacterVaryingColumn extends StringColumn
         IDefaultValueColumn<String, CharacterVaryingColumn>,
         IInListColumn<String, CharacterVaryingColumn>,
         ILikeColumn<CharacterVaryingColumn>,
-        INullOrNotColumn<String, CharacterVaryingColumn> {
+        INullOrNotColumn<String, CharacterVaryingColumn>,
+        IPlusColumn<String, CharacterVaryingColumn> {
     public int length;
 
     public CharacterVaryingColumn(@Nonnull String name, int length) {

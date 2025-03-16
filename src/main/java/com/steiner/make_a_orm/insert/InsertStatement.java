@@ -4,14 +4,14 @@ import com.steiner.make_a_orm.column.Column;
 import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.exception.SQLInsertException;
 import com.steiner.make_a_orm.exception.SQLRuntimeException;
+import com.steiner.make_a_orm.select.ResultRow;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.transaction.Transaction;
+import com.steiner.make_a_orm.utils.GlobalLogger;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,16 +23,23 @@ public final class InsertStatement {
     @Nonnull
     public List<Column<?>> columns;
 
-    @Nonnull
+    @Nullable
     public String insertPattern;
 
-    @Nonnull
+    @Nullable
     public PreparedStatement statement;
+
+    @Nonnull
+    public List<String> listOfColumnString;
 
     @Nonnull
     public ArrayList<Boolean> bits;
 
+    @Nonnull
     public Map<Column<?>, Integer> indexMap;
+
+    @Nonnull
+    public Connection connection;
 
     public InsertStatement(@Nonnull Table intoTable) {
         this.intoTable = intoTable;
@@ -40,10 +47,13 @@ public final class InsertStatement {
                 .filter(column -> !(column.isPrimaryKey && column.isAutoIncrement))
                 .toList();
 
-        List<String> listOfColumnString = columns.stream()
+        this.connection = Transaction.currentConnection();
+        this.listOfColumnString = columns.stream()
                 .map(column -> "`%s`".formatted(column.name))
                 .toList();
 
+        this.statement = null;
+        this.insertPattern = null;
         this.bits = new ArrayList<>(
                 Stream.iterate(false, value -> false)
                         .limit((long) listOfColumnString.size())
@@ -56,18 +66,6 @@ public final class InsertStatement {
         }
 
         Collections.fill(bits, false);
-
-        String columnString = String.join(", ", listOfColumnString);
-        String slots = listOfColumnString.stream().map(value -> "?").collect(Collectors.joining(", "));
-        insertPattern = "insert into `%s`(%s) values(%s);".formatted(intoTable.name, columnString, slots);
-
-        Connection connection = Transaction.currentConnection();
-        try {
-            statement = connection.prepareStatement(insertPattern);
-        } catch (SQLException e) {
-            throw new SQLRuntimeException("create statement failed", e);
-        }
-
     }
 
     public <T> void set(Column<T> column, @Nullable T value) {
@@ -94,27 +92,80 @@ public final class InsertStatement {
 
     }
 
-
     public void executeInsert() {
-        // process missing value
-        int endIndex = columns.size() - 1;
-        for (int index = 0; index <= endIndex; index += 1) {
-            Column<?> column = columns.get(index);
-            boolean bit = bits.get(index);
-
-            if (!bit) {
-                if (column.hasDefault()) {
-                    column.injectDefault(statement, index + 1);
-                } else {
-                    throw new SQLInsertException("there is no default value set in the `%s`".formatted(column.name));
-                }
-            }
-        }
+        String tableName = intoTable.name;
+        String columnString = String.join(", ", listOfColumnString);
+        String valueString = listOfColumnString.stream().map(value -> "?").collect(Collectors.joining(", "));
+        this.insertPattern = "insert into `%s`(%s) values(%s);"
+                .formatted(tableName, columnString, valueString);
 
         try {
+            statement = connection.prepareStatement(insertPattern);
+            Objects.requireNonNull(statement);
+
+            // process missing value
+            int endIndex = columns.size() - 1;
+            for (int index = 0; index <= endIndex; index += 1) {
+                Column<?> column = columns.get(index);
+                boolean bit = bits.get(index);
+
+                if (!bit) {
+                    if (column.hasDefault()) {
+                        column.injectDefault(statement, index + 1);
+                    } else {
+                        throw new SQLInsertException("there is no default value set in the `%s`".formatted(column.name));
+                    }
+                }
+            }
+
             statement.execute();
         } catch (SQLException e) {
-            throw new SQLInsertException(e);
+            throw new SQLRuntimeException("create statement failed", e);
+        }
+    }
+
+    public ResultRow executeInsertReturning(Column<?>... returningColumns) {
+        boolean allMatch = Arrays.stream(returningColumns).allMatch(column -> column.getFromTable().equals(this.intoTable));
+        if (!allMatch) {
+            throw new SQLBuildException("有些字段不属于这个表: %s".formatted(this.intoTable.name));
+        }
+
+        String tableName = intoTable.name;
+        String columnString = String.join(", ", listOfColumnString);
+        String valueString = listOfColumnString.stream().map(value -> "?").collect(Collectors.joining(", "));
+        String returning = Arrays.stream(returningColumns).map(column -> "`%s`".formatted(column.name)).collect(Collectors.joining(", "));
+        this.insertPattern = "insert into `%s`(%s) values(%s) returning %s;"
+                .formatted(tableName, columnString, valueString, returning);
+
+        try {
+            // statement = connection.prepareStatement(insertPattern, PreparedStatement.RETURN_GENERATED_KEYS);
+            statement = connection.prepareStatement(insertPattern);
+            Objects.requireNonNull(statement);
+
+            // process missing value
+            int endIndex = columns.size() - 1;
+            for (int index = 0; index <= endIndex; index += 1) {
+                Column<?> column = columns.get(index);
+                boolean bit = bits.get(index);
+
+                if (!bit) {
+                    if (column.hasDefault()) {
+                        column.injectDefault(statement, index + 1);
+                    } else {
+                        throw new SQLInsertException("there is no default value set in the `%s`".formatted(column.name));
+                    }
+                }
+            }
+
+            statement.execute();
+            ResultSet resultSet = statement.getResultSet();
+            if (!resultSet.next()) {
+                throw new SQLRuntimeException("result set calling next() failed");
+            }
+
+            return new ResultRow(resultSet);
+        } catch (SQLException e) {
+            throw new SQLRuntimeException("create statement failed", e);
         }
     }
 }

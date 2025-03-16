@@ -10,15 +10,16 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 
 public final class TimestampColumn extends Column<java.sql.Timestamp>
         implements
         IEqualColumn<java.sql.Timestamp, TimestampColumn>,
         ICompareDateColumn<java.sql.Timestamp, TimestampColumn>,
-        INullOrNotColumn<Timestamp, TimestampColumn>,
-        IBetweenColumn<Timestamp, TimestampColumn>,
-        IInListColumn<Timestamp, TimestampColumn> {
+        INullOrNotColumn<java.sql.Timestamp, TimestampColumn>,
+        IBetweenColumn<java.sql.Timestamp, TimestampColumn>,
+        IInListColumn<java.sql.Timestamp, TimestampColumn>,
+        IPlusColumn<java.sql.Timestamp, TimestampColumn>,
+        IMinusColumn<java.sql.Timestamp, TimestampColumn> {
 
     public TimestampColumn(String name) {
         super(name);
@@ -32,7 +33,7 @@ public final class TimestampColumn extends Column<java.sql.Timestamp>
 
     @Nonnull
     @Override
-    public String format(@Nonnull Timestamp value) {
+    public String format(@Nonnull java.sql.Timestamp value) {
         return "'%s'".formatted(value.toString());
     }
 
@@ -53,7 +54,7 @@ public final class TimestampColumn extends Column<java.sql.Timestamp>
     }
 
     @Override
-    public void inject(@Nonnull PreparedStatement statement, int index, @Nonnull Timestamp value) {
+    public void inject(@Nonnull PreparedStatement statement, int index, @Nonnull java.sql.Timestamp value) {
         try {
             statement.setTimestamp(index, value);
         } catch (SQLException e) {

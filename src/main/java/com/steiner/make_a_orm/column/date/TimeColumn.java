@@ -10,15 +10,16 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Time;
 
 public final class TimeColumn extends Column<java.sql.Time>
         implements
         IEqualColumn<java.sql.Time, TimeColumn>,
         ICompareDateColumn<java.sql.Time, TimeColumn>,
-        INullOrNotColumn<Time, TimeColumn>,
-        IBetweenColumn<Time, TimeColumn>,
-        IInListColumn<Time, TimeColumn> {
+        INullOrNotColumn<java.sql.Time, TimeColumn>,
+        IBetweenColumn<java.sql.Time, TimeColumn>,
+        IInListColumn<java.sql.Time, TimeColumn>,
+        IPlusColumn<java.sql.Time, TimeColumn>,
+        IMinusColumn<java.sql.Time, TimeColumn> {
 
     public TimeColumn(String name) {
         super(name);
@@ -33,7 +34,7 @@ public final class TimeColumn extends Column<java.sql.Time>
 
     @Nonnull
     @Override
-    public String format(@Nonnull Time value) {
+    public String format(@Nonnull java.sql.Time value) {
         return "'%s'".formatted(value.toString());
     }
 
@@ -55,7 +56,7 @@ public final class TimeColumn extends Column<java.sql.Time>
     }
 
     @Override
-    public void inject(@Nonnull PreparedStatement statement, int index, @Nonnull Time value) {
+    public void inject(@Nonnull PreparedStatement statement, int index, @Nonnull java.sql.Time value) {
         try {
             statement.setTime(index, value);
         } catch (SQLException e) {

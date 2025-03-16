@@ -153,6 +153,28 @@ public void testNumericInsert() {
 }
 ```
 
+#### 插入并返回
+
+```java
+@Test
+public void testNumericInsertReturning() {
+    Transaction.runWith(database, () -> {
+        ResultRow resultRow = numberCollectionTable.insertReturning(
+                statement -> {},
+                numberCollectionTable.id,
+                numberCollectionTable.column1,
+                numberCollectionTable.column2
+        );
+
+        int id = resultRow.get(numberCollectionTable.id);
+        System.out.println(resultRow.get(numberCollectionTable.column1));
+        System.out.println(resultRow.get(numberCollectionTable.column2));
+        System.out.println(id);
+    });
+
+}
+```
+
 #### 更新
 
 ```java
@@ -163,6 +185,17 @@ public void testNumericUpdate() {
         numberCollectionTable.update(where, statement -> {
             statement.set(numberCollectionTable.column1, true);
         });
+    });
+}
+```
+
+#### 删除 + where 条件
+
+```java
+@Test
+public void testNumericDeleteWithWhere() {
+    Transaction.runWith(database, () -> {
+        numberCollectionTable.deleteWhere(() -> numberCollectionTable.column1.equal(true));
     });
 }
 ```

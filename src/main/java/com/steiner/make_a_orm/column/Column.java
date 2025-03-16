@@ -5,6 +5,7 @@ import com.steiner.make_a_orm.column.constraint.ConstraintType;
 import com.steiner.make_a_orm.column.constraint.impl.*;
 import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.exception.SQLRuntimeException;
+import com.steiner.make_a_orm.table.Table;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -13,18 +14,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public abstract class Column<T> {
+    @Nullable
+    private Table fromTable;
+
+    @Nonnull
     public String name;
+
+    @Nonnull
     public List<AbstractConstraint> constraints;
+
     public boolean isPrimaryKey;
     public boolean isAutoIncrement;
     public boolean setDefault;
     public boolean isNullable;
 
-    public Column(String name) {
+    public Column(@Nonnull String name) {
+        this.fromTable = null;
         this.name = name;
         this.constraints = new LinkedList<>();
         this.constraints.add(new NotNullConstraint());
@@ -34,6 +44,14 @@ public abstract class Column<T> {
         this.isNullable = false;
     }
 
+    public void setFromTable(@Nonnull Table fromTable) {
+        this.fromTable = fromTable;
+    }
+
+    @Nonnull
+    public Table getFromTable() {
+        return Objects.requireNonNull(this.fromTable);
+    }
     // constraints
     public Column<T> nullable() {
         constraints.removeIf(constraint -> constraint instanceof NotNullConstraint);

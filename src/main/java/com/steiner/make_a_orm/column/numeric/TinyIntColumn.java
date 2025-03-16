@@ -15,7 +15,7 @@ public final class TinyIntColumn extends NumericColumn<Byte>
         ICompareColumn<Byte, TinyIntColumn>,
         IBetweenColumn<Byte, TinyIntColumn>,
         IInListColumn<Byte, TinyIntColumn>,
-        INullOrNotColumn<Byte, TinyIntColumn>{
+        INullOrNotColumn<Byte, TinyIntColumn> {
     public TinyIntColumn(@Nonnull String name) {
         super(name);
     }

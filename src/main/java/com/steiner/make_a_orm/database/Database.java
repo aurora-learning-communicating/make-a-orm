@@ -57,8 +57,8 @@ public class Database {
                         throw new IllegalAccessException("there is null field in the builder");
                     }
                 } catch (IllegalAccessException e) {
-                    SQLException sqlException = new SQLException(e.getMessage());
-                    return Result.Err(sqlException, e);
+                    SQLException sqlException = new SQLException(e);
+                    return Result.Err(sqlException);
                 }
             }
 

@@ -16,7 +16,10 @@ public final class IntColumn extends NumericColumn<Integer>
         ICompareColumn<Integer, IntColumn>,
         IBetweenColumn<Integer, IntColumn>,
         IInListColumn<Integer, IntColumn>,
-        INullOrNotColumn<Integer, IntColumn> {
+        INullOrNotColumn<Integer, IntColumn>,
+        IPlusColumn<Integer, IntColumn>,
+        IMinusColumn<Integer, IntColumn>,
+        IMulDivColumn<Integer, IntColumn> {
     public IntColumn(@Nonnull String name) {
         super(name);
     }

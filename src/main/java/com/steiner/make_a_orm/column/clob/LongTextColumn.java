@@ -1,7 +1,6 @@
 package com.steiner.make_a_orm.column.clob;
 
 import com.steiner.make_a_orm.exception.SQLBuildException;
-import com.steiner.make_a_orm.exception.SQLRuntimeException;
 import jakarta.annotation.Nonnull;
 
 import java.io.Reader;

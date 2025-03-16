@@ -14,7 +14,11 @@ public final class DoubleColumn extends NumericColumn<Double>
         ICompareColumn<Double, DoubleColumn>,
         IBetweenColumn<Double, DoubleColumn>,
         IInListColumn<Double, DoubleColumn>,
-        INullOrNotColumn<Double, DoubleColumn> {
+        INullOrNotColumn<Double, DoubleColumn>,
+        IPlusColumn<Double, DoubleColumn>,
+        IMinusColumn<Double, DoubleColumn>,
+        IMulDivColumn<Double, DoubleColumn> {
+
     public DoubleColumn(@Nonnull String name) {
         super(name);
     }

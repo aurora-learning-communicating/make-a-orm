@@ -1,6 +1,5 @@
 package com.steiner.make_a_orm.column.constraint.impl;
 
-import com.steiner.make_a_orm.column.constraint.AbstractConstraint;
 import com.steiner.make_a_orm.column.constraint.StandAloneConstraint;
 import com.steiner.make_a_orm.where.WhereStatement;
 import jakarta.annotation.Nonnull;

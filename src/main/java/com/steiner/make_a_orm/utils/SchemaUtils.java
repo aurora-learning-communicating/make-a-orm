@@ -3,8 +3,6 @@ package com.steiner.make_a_orm.utils;
 import com.steiner.make_a_orm.exception.SQLRuntimeException;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.transaction.Transaction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;

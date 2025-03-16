@@ -1,6 +1,9 @@
 package com.steiner.make_a_orm.select;
 
 import com.steiner.make_a_orm.column.Column;
+import com.steiner.make_a_orm.column.trait.IEqualColumn;
+import com.steiner.make_a_orm.column.trait.IPrimaryKeyColumn;
+import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.transaction.Transaction;
 import com.steiner.make_a_orm.utils.GlobalLogger;
@@ -19,7 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class Query implements Spliterator<ResultRow> {
+public final class Query implements Spliterator<ResultRow> {
     @Nonnull
     public Table fromTable;
 
@@ -63,13 +66,20 @@ public class Query implements Spliterator<ResultRow> {
     }
 
     // TODO edit here with column inject
-    public Query where(WhereStatement statement) {
+    public Query where(@Nonnull WhereStatement statement) {
         this.whereStatement = statement;
         return this;
     }
 
-    public Query where(Supplier<WhereStatement> block) {
+    public Query where(@Nonnull Supplier<WhereStatement> block) {
         this.whereStatement = block.get();
+        return this;
+    }
+
+    public <T, E extends Column<T> & IPrimaryKeyColumn<T, E> & IEqualColumn<T, E>>
+    Query whereMatchPrimaryKey(T value) {
+        E primaryColumn = fromTable.primaryKeyColumn();
+        this.whereStatement = primaryColumn.equal(value);
         return this;
     }
 
@@ -95,7 +105,7 @@ public class Query implements Spliterator<ResultRow> {
     }
 
     @Nonnull
-    public final String toSQL() {
+    public String toSQL() {
         StringBuilder stringBuilder = new StringBuilder();
         String columnNames = columns.stream()
                 .map(column -> "`%s`".formatted(column.name))
@@ -135,7 +145,7 @@ public class Query implements Spliterator<ResultRow> {
     }
 
     @Nonnull
-    public final Stream<ResultRow> stream() {
+    public Stream<ResultRow> stream() {
         try {
             String sql = toSQL();
             PreparedStatement statement = connection.prepareStatement(sql);

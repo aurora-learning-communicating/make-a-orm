@@ -14,9 +14,13 @@ import com.steiner.make_a_orm.column.numeric.*;
 import com.steiner.make_a_orm.column.string.CharacterColumn;
 import com.steiner.make_a_orm.column.string.CharacterVaryingColumn;
 import com.steiner.make_a_orm.column.string.TextColumn;
+import com.steiner.make_a_orm.column.trait.IEqualColumn;
+import com.steiner.make_a_orm.column.trait.IPrimaryKeyColumn;
+import com.steiner.make_a_orm.delete.DeleteStatement;
 import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.insert.InsertStatement;
 import com.steiner.make_a_orm.select.Query;
+import com.steiner.make_a_orm.select.ResultRow;
 import com.steiner.make_a_orm.update.UpdateStatement;
 import com.steiner.make_a_orm.where.WhereStatement;
 import jakarta.annotation.Nonnull;
@@ -37,6 +41,15 @@ public abstract class Table {
     public Table(@Nonnull String name) {
         this.name = name;
         this.columns = new ArrayList<>();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Table other) {
+            return this.name.equals(other.name);
+        } else {
+            return false;
+        }
     }
 
     @Nonnull
@@ -100,10 +113,25 @@ public abstract class Table {
         return new Query(this, columns.toArray(Column<?>[]::new));
     }
 
+    public final <T, E extends Column<T> & IPrimaryKeyColumn<T, E> & IEqualColumn<T, E>>
+    E primaryKeyColumn() {
+        return columns.stream()
+                .filter(column -> column.isPrimaryKey && column instanceof IPrimaryKeyColumn<?,?> && column instanceof IEqualColumn<?,?>)
+                .findFirst()
+                .map(column -> (E) column /*maybe here*/)
+                .orElseThrow(() -> new SQLBuildException("there is no primary key in the table `%s`".formatted(name)));
+    }
+
     public final void insert(@Nonnull Consumer<InsertStatement> consumer) {
         InsertStatement insertStatement = new InsertStatement(this);
         consumer.accept(insertStatement);
         insertStatement.executeInsert();
+    }
+
+    public final ResultRow insertReturning(@Nonnull Consumer<InsertStatement> consumer, Column<?>... columns) {
+        InsertStatement insertStatement = new InsertStatement(this);
+        consumer.accept(insertStatement);
+        return insertStatement.executeInsertReturning(columns);
     }
 
     public final void update(@Nonnull WhereStatement where, @Nonnull Consumer<UpdateStatement> consumer) {
@@ -126,140 +154,121 @@ public abstract class Table {
         updateStatement.executeUpdate();
     }
 
-    @Nonnull
-    public final BlobColumn blob(@Nonnull String name) {
-        BlobColumn column = new BlobColumn(name);
-        columns.add(column);
+    public final void deleteWhere(@Nonnull WhereStatement where) {
+        DeleteStatement deleteStatement = new DeleteStatement(this);
+        deleteStatement.where(where);
+        deleteStatement.executeDelete();
+    }
 
-        return column;
+    public final void deleteWhere(@Nonnull Supplier<WhereStatement> supplier) {
+        DeleteStatement deleteStatement = new DeleteStatement(this);
+        deleteStatement.where(supplier);
+        deleteStatement.executeDelete();
+    }
+
+    public final void deleteAll() {
+        DeleteStatement deleteStatement = new DeleteStatement(this);
+        deleteStatement.executeDelete();
     }
 
     @Nonnull
-    public final MediumBlobColumn mediumBlob(@Nonnull String name) {
-        MediumBlobColumn column = new MediumBlobColumn(name);
-        columns.add(column);
-
-        return column;
+    protected final BlobColumn blob(@Nonnull String name) {
+        return registerColumn(new BlobColumn(name));
     }
 
     @Nonnull
-    public final LongBlobColumn longBlob(@Nonnull String name) {
-        LongBlobColumn column = new LongBlobColumn(name);
-        columns.add(column);
-
-        return column;
+    protected final MediumBlobColumn mediumBlob(@Nonnull String name) {
+        return registerColumn(new MediumBlobColumn(name));
     }
 
     @Nonnull
-    public final BooleanColumn bool(@Nonnull String name) {
-        BooleanColumn column = new BooleanColumn(name);
-        columns.add(column);
-        return column;
+    protected final LongBlobColumn longBlob(@Nonnull String name) {
+        return registerColumn(new LongBlobColumn(name));
     }
 
     @Nonnull
-    public final LongTextColumn longText(@Nonnull String name) {
-        LongTextColumn column = new LongTextColumn(name);
-        columns.add(column);
-        return column;
+    protected final BooleanColumn bool(@Nonnull String name) {
+        return registerColumn(new BooleanColumn(name));
     }
 
     @Nonnull
-    public final MediumTextColumn mediumText(@Nonnull String name) {
-        MediumTextColumn column = new MediumTextColumn(name);
-        columns.add(column);
-        return column;
+    protected final LongTextColumn longText(@Nonnull String name) {
+        return registerColumn(new LongTextColumn(name));
     }
 
     @Nonnull
-    public final DateColumn date(@Nonnull String name) {
-        DateColumn column = new DateColumn(name);
-        columns.add(column);
-        return column;
+    protected final MediumTextColumn mediumText(@Nonnull String name) {
+        return registerColumn(new MediumTextColumn(name));
     }
 
     @Nonnull
-    public final TimeColumn time(@Nonnull String name) {
-        TimeColumn column = new TimeColumn(name);
-        columns.add(column);
-        return column;
+    protected final DateColumn date(@Nonnull String name) {
+        return registerColumn(new DateColumn(name));
     }
 
     @Nonnull
-    public final TimestampColumn timestamp(@Nonnull String name) {
-        TimestampColumn column = new TimestampColumn(name);
-        columns.add(column);
-        return column;
+    protected final TimeColumn time(@Nonnull String name) {
+        return registerColumn(new TimeColumn(name));
     }
 
     @Nonnull
-    public final BigIntColumn bigint(@Nonnull String name) {
-        BigIntColumn column = new BigIntColumn(name);
-        columns.add(column);
-        return column;
+    protected final TimestampColumn timestamp(@Nonnull String name) {
+        return registerColumn(new TimestampColumn(name));
     }
 
     @Nonnull
-    public final DecimalColumn decimal(@Nonnull String name, int precision, int scale) {
-        DecimalColumn column = new DecimalColumn(name, precision, scale);
-        columns.add(column);
-        return column;
+    protected final BigIntColumn bigint(@Nonnull String name) {
+        return registerColumn(new BigIntColumn(name));
     }
 
     @Nonnull
-    public final DoubleColumn float64(@Nonnull String name) {
-        DoubleColumn column = new DoubleColumn(name);
-        columns.add(column);
-        return column;
+    protected final DecimalColumn decimal(@Nonnull String name, int precision, int scale) {
+        return registerColumn(new DecimalColumn(name, precision, scale));
     }
 
     @Nonnull
-    public final FloatColumn float32(@Nonnull String name) {
-        FloatColumn column = new FloatColumn(name);
-        columns.add(column);
-        return column;
+    protected final DoubleColumn float64(@Nonnull String name) {
+        return registerColumn(new DoubleColumn(name));
     }
 
     @Nonnull
-    public final IntColumn integer(@Nonnull String name) {
-        IntColumn column = new IntColumn(name);
-        columns.add(column);
-        return column;
+    protected final FloatColumn float32(@Nonnull String name) {
+        return registerColumn(new FloatColumn(name));
     }
 
     @Nonnull
-    public final SmallIntColumn smallint(@Nonnull String name) {
-        SmallIntColumn column = new SmallIntColumn(name);
-        columns.add(column);
-        return column;
+    protected final IntColumn integer(@Nonnull String name) {
+        return registerColumn(new IntColumn(name));
     }
 
     @Nonnull
-    public final TinyIntColumn tinyint(@Nonnull String name) {
-        TinyIntColumn column = new TinyIntColumn(name);
-        columns.add(column);
-        return column;
+    protected final SmallIntColumn smallint(@Nonnull String name) {
+        return registerColumn(new SmallIntColumn(name));
     }
 
     @Nonnull
-    public final CharacterColumn character(@Nonnull String name, int length) {
-        CharacterColumn column = new CharacterColumn(name, length);
-        columns.add(column);
-        return column;
+    protected final TinyIntColumn tinyint(@Nonnull String name) {
+        return registerColumn(new TinyIntColumn(name));
     }
 
     @Nonnull
-    public final CharacterVaryingColumn characterVarying(@Nonnull String name, int length) {
-        CharacterVaryingColumn column = new CharacterVaryingColumn(name, length);
-        columns.add(column);
-        return column;
+    protected final CharacterColumn character(@Nonnull String name, int length) {
+        return registerColumn(new CharacterColumn(name, length));
     }
 
     @Nonnull
-    public final TextColumn text(@Nonnull String name) {
-        TextColumn column = new TextColumn(name);
-        columns.add(column);
-        return column;
+    protected final CharacterVaryingColumn characterVarying(@Nonnull String name, int length) {
+        return registerColumn(new CharacterVaryingColumn(name, length));
     }
 
+    @Nonnull
+    protected final TextColumn text(@Nonnull String name) {
+        return registerColumn(new TextColumn(name));
+    }
+
+    private <T extends Column<?>> T registerColumn(T column) {
+        columns.add(column);
+        column.setFromTable(this);
+        return column;
+    }
 }

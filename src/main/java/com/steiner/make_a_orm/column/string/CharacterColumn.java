@@ -13,7 +13,8 @@ public final class CharacterColumn extends StringColumn
         IDefaultValueColumn<String, CharacterColumn>,
         IInListColumn<String, CharacterColumn>,
         ILikeColumn<CharacterColumn>,
-        INullOrNotColumn<String, CharacterColumn> {
+        INullOrNotColumn<String, CharacterColumn>,
+        IPlusColumn<String, StringColumn> {
     public int length;
 
     public CharacterColumn(@Nonnull String name, int length) {

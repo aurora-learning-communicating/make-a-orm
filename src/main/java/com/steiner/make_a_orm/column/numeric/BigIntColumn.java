@@ -16,7 +16,10 @@ public final class BigIntColumn extends NumericColumn<Long>
         ICompareColumn<Long, BigIntColumn>,
         IBetweenColumn<Long, BigIntColumn>,
         INullOrNotColumn<Long, BigIntColumn>,
-        IInListColumn<Long, BigIntColumn> {
+        IInListColumn<Long, BigIntColumn>,
+        IPlusColumn<Long, BigIntColumn>,
+        IMinusColumn<Long, BigIntColumn>,
+        IMulDivColumn<Long, BigIntColumn> {
     public BigIntColumn(@Nonnull String name) {
         super(name);
     }

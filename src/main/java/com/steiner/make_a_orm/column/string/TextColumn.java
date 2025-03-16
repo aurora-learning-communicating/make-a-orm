@@ -1,9 +1,6 @@
 package com.steiner.make_a_orm.column.string;
 
-import com.steiner.make_a_orm.column.trait.IDefaultValueColumn;
-import com.steiner.make_a_orm.column.trait.IInListColumn;
-import com.steiner.make_a_orm.column.trait.ILikeColumn;
-import com.steiner.make_a_orm.column.trait.INullOrNotColumn;
+import com.steiner.make_a_orm.column.trait.*;
 import com.steiner.make_a_orm.exception.SQLBuildException;
 import jakarta.annotation.Nonnull;
 
@@ -15,7 +12,8 @@ public final class TextColumn extends StringColumn
         IDefaultValueColumn<String, TextColumn>,
         INullOrNotColumn<String, TextColumn>,
         ILikeColumn<TextColumn>,
-        IInListColumn<String, TextColumn> {
+        IInListColumn<String, TextColumn>,
+        IPlusColumn<String, TextColumn> {
     public TextColumn(@Nonnull String name) {
         super(name);
     }

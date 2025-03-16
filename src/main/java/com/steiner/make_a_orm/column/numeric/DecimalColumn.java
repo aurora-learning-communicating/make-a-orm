@@ -19,7 +19,10 @@ public final class DecimalColumn extends Column<BigDecimal>
         ICompareColumn<BigDecimal, DecimalColumn>,
         IBetweenColumn<BigDecimal, DecimalColumn>,
         IInListColumn<BigDecimal, DecimalColumn>,
-        INullOrNotColumn<BigDecimal, DecimalColumn> {
+        INullOrNotColumn<BigDecimal, DecimalColumn>,
+        IPlusColumn<BigDecimal, DecimalColumn>,
+        IMinusColumn<BigDecimal, DecimalColumn>,
+        IMulDivColumn<BigDecimal, DecimalColumn> {
     public int precision;
     public int scale;
 

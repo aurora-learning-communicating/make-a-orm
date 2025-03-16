@@ -14,7 +14,9 @@ public final class FloatColumn extends NumericColumn<Float>
         ICompareColumn<Float, FloatColumn>,
         IBetweenColumn<Float, FloatColumn>,
         IInListColumn<Float, FloatColumn>,
-        INullOrNotColumn<Float, FloatColumn> {
+        INullOrNotColumn<Float, FloatColumn>,
+        IPlusColumn<Float, FloatColumn>,
+        IMinusColumn<Float, FloatColumn> {
     public FloatColumn(@Nonnull String name) {
         super(name);
     }

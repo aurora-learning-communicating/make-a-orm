@@ -8,19 +8,16 @@ import jakarta.annotation.Nullable;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class SettingPairs<T> {
+public final class SetExpression<T> extends UpdateExpression {
     @Nonnull
     public Column<T> column;
-
-    @Nonnull
-    public String pattern;
 
     @Nullable
     public T value;
 
-    public SettingPairs(@Nonnull Column<T> column, @Nonnull String pattern, @Nullable T value) {
+    public SetExpression(@Nonnull Column<T> column, @Nullable T value) {
+        super(UpdateExpression.Type.Set);
         this.column = column;
-        this.pattern = pattern;
         this.value = value;
     }
 
@@ -36,4 +33,12 @@ public class SettingPairs<T> {
         }
     }
 
+    @Override
+    public String toSQL() {
+        if (value == null) {
+            return "`%s` = null".formatted(column.name);
+        } else {
+            return "`%s` = ?".formatted(column.name);
+        }
+    }
 }
