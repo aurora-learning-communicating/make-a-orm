@@ -1,12 +1,13 @@
 package com.steiner.make_a_orm.column.constraint.impl;
 
 import com.steiner.make_a_orm.column.Column;
-import com.steiner.make_a_orm.column.constraint.StandAloneConstraint;
+import com.steiner.make_a_orm.column.constraint.Constraint;
+import com.steiner.make_a_orm.util.Quote;
 import jakarta.annotation.Nonnull;
 
-public class PrimaryKeyConstraint extends StandAloneConstraint {
+public class PrimaryKeyConstraint extends Constraint.StandAlone {
     @Nonnull
-    public Column<?> column;
+    Column<?> column;
 
     public PrimaryKeyConstraint(@Nonnull Column<?> column) {
         super(null);
@@ -15,7 +16,7 @@ public class PrimaryKeyConstraint extends StandAloneConstraint {
 
     @Nonnull
     @Override
-    public String constraint() {
-        return "primary key(`%s`)".formatted(column.name);
+    public String toSQL() {
+        return "primary key (%s)".formatted(Quote.quoteColumnName(column.name));
     }
 }

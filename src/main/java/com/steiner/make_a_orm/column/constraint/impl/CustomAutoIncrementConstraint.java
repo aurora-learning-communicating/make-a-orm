@@ -1,10 +1,10 @@
 package com.steiner.make_a_orm.column.constraint.impl;
 
-import com.steiner.make_a_orm.column.constraint.SuffixConstraint;
+import com.steiner.make_a_orm.column.constraint.Constraint;
 import jakarta.annotation.Nonnull;
 
-public class CustomAutoIncrementConstraint extends SuffixConstraint {
-    public int start;
+public class CustomAutoIncrementConstraint extends Constraint.Suffix {
+    int start;
 
     public CustomAutoIncrementConstraint(int start) {
         this.start = start;
@@ -12,7 +12,7 @@ public class CustomAutoIncrementConstraint extends SuffixConstraint {
 
     @Nonnull
     @Override
-    public String constraint() {
-        return "auto_increment = %s".formatted(start);
+    public String toSQL() {
+        return "auto_increment = %s".formatted(this.start);
     }
 }
