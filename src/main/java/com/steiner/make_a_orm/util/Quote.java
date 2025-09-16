@@ -17,4 +17,7 @@ public class Quote {
     public static String quoteKeyName(@Nonnull String name) {
         return name;
     }
+
+    @Nonnull
+    public static String autoIncrement = "autoincrement";
 }

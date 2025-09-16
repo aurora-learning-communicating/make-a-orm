@@ -1,15 +1,12 @@
 package com.steiner.make_a_orm.exception;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+
+import java.sql.SQLException;
+
 public class SQLRuntimeException extends RuntimeException {
-  public SQLRuntimeException(String message) {
-    super(message);
-  }
-
-  public SQLRuntimeException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public SQLRuntimeException(Throwable cause) {
-    super(cause);
-  }
+    public SQLRuntimeException(@Nonnull String message, @Nullable SQLException cause) {
+        super(message, cause);
+    }
 }
