@@ -4,8 +4,19 @@ import com.steiner.make_a_orm.IToSQL;
 import com.steiner.make_a_orm.column.Column;
 import jakarta.annotation.Nonnull;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Date;
+
 public abstract class DefaultExpression implements IToSQL {
+    public abstract void writeIntoStatement(@Nonnull Column<?> column, @Nonnull PreparedStatement statement, int index) throws SQLException;
+
     public static DefaultExpression Null = new DefaultExpression() {
+        @Override
+        public void writeIntoStatement(@Nonnull Column<?> column, @Nonnull PreparedStatement statement, int index) throws SQLException {
+            statement.setObject(index, null);
+        }
+
         @Nonnull
         @Override
         public String toSQL() {
@@ -30,11 +41,22 @@ public abstract class DefaultExpression implements IToSQL {
         public String toSQL() {
             return "default %s".formatted(literal);
         }
+
+
+        @Override
+        public void writeIntoStatement(@Nonnull Column<?> column, @Nonnull PreparedStatement statement, int index) throws SQLException {
+            statement.setObject(index, value);
+        }
     }
 
     public static abstract class Expression extends DefaultExpression {
 
         public static Expression True = new Expression() {
+            @Override
+            public void writeIntoStatement(@Nonnull Column<?> column, @Nonnull PreparedStatement statement, int index) throws SQLException {
+                statement.setBoolean(index, true);
+            }
+
             @Nonnull
             @Override
             public String toSQL() {
@@ -43,6 +65,11 @@ public abstract class DefaultExpression implements IToSQL {
         };
 
         public static Expression False = new Expression() {
+            @Override
+            public void writeIntoStatement(@Nonnull Column<?> column, @Nonnull PreparedStatement statement, int index) throws SQLException {
+                statement.setBoolean(index, false);
+            }
+
             @Nonnull
             @Override
             public String toSQL() {
@@ -51,6 +78,12 @@ public abstract class DefaultExpression implements IToSQL {
         };
 
         public static Expression Now = new Expression() {
+            @Override
+            public void writeIntoStatement(@Nonnull Column<?> column, @Nonnull PreparedStatement statement, int index) throws SQLException {
+                // STUB: attention here, might be error
+                statement.setObject(index, new Date(), column.sqlType());
+            }
+
             @Nonnull
             @Override
             public String toSQL() {
@@ -59,6 +92,11 @@ public abstract class DefaultExpression implements IToSQL {
         };
 
         public static Expression CurrentTimestamp = new Expression() {
+            @Override
+            public void writeIntoStatement(@Nonnull Column<?> column, @Nonnull PreparedStatement statement, int index) throws SQLException {
+                statement.setObject(index, new Date(), column.sqlType());
+            }
+
             @Nonnull
             @Override
             public String toSQL() {

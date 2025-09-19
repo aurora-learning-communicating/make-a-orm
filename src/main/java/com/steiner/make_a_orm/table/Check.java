@@ -26,6 +26,6 @@ public class Check implements IToSQL {
     @Nonnull
     @Override
     public String toSQL() {
-
+        return "constraint %s check (%s)".formatted(name, whereStatement.toSQL());
     }
 }

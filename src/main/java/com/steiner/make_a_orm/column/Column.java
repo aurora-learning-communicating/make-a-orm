@@ -3,6 +3,8 @@ package com.steiner.make_a_orm.column;
 import com.steiner.make_a_orm.IToSQL;
 import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.exception.SQLRuntimeException;
+import com.steiner.make_a_orm.key.Key;
+import com.steiner.make_a_orm.key.PrimaryKey;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.util.DefaultExpression;
 import com.steiner.make_a_orm.util.Quote;
@@ -12,11 +14,16 @@ import jakarta.annotation.Nullable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public abstract class Column<T> implements IToSQL {
+    @Nonnull
+    public abstract String format(@Nonnull T value);
+    @Nonnull
+    public abstract String typeQuote();
+    public abstract int sqlType();
+    public abstract void write(@Nonnull PreparedStatement statement, int index, @Nonnull T value) throws SQLException;
+
     @Nullable
     private Table fromTable; // late
     @Nonnull
@@ -65,7 +72,6 @@ public abstract class Column<T> implements IToSQL {
         return this;
     }
 
-    // TODO: primaryKey -> PrimaryKey
     // TODO: autoIncrement after primaryKey
     // TODO: withDefault
     @Nonnull
@@ -99,12 +105,11 @@ public abstract class Column<T> implements IToSQL {
         try {
             return (T) resultSet.getObject(this.name);
         } catch (SQLException e) {
-            e.printStackTrace(System.out);
             throw new SQLRuntimeException("error when read", e);
         }
     }
 
-    public abstract void write(@Nonnull PreparedStatement statement, int index, @Nonnull T value);
+
     public final void writeDefault(@Nonnull PreparedStatement statement, int index) {
         if (isPrimaryKey && isAutoIncrement) {
             throw new SQLBuildException("do not set value on a primary key and autoincrement column", null);
@@ -114,23 +119,16 @@ public abstract class Column<T> implements IToSQL {
             throw new SQLBuildException("there is no default value on the column %s".formatted(name), null);
         }
 
-
-        // TODO: how about meeting when default value is null ??
         try {
             Objects.requireNonNull(this.defaultExpression);
-            statement.setObject(index, this.defaultExpression.toSQL());
+            // TODO: when meeting expression
+            this.defaultExpression.writeIntoStatement(this, statement, index);
         } catch (SQLException e) {
             throw new SQLRuntimeException("error when `setObject`", e);
         }
-
-
     }
 
-    @Nonnull
-    public abstract String format(@Nonnull T value);
 
-    @Nonnull
-    public abstract String sqlType();
 
     @Nonnull
     @Override
@@ -139,8 +137,13 @@ public abstract class Column<T> implements IToSQL {
         // 1. quote(name) type
         stringBuilder.append(Quote.quoteColumnName(name))
                 .append(" ")
-                .append(this.sqlType());
+                .append(this.typeQuote());
         // 2. constraint
+
+        if (!isNullable) {
+            stringBuilder.append(" ")
+                    .append("not null");
+        }
 
         if (isAutoIncrement) {
             stringBuilder.append(" ")
