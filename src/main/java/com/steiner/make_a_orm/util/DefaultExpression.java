@@ -31,9 +31,9 @@ public abstract class DefaultExpression implements IToSQL {
         @Nonnull
         String literal;
 
-        public Literal(@Nonnull T value, @Nonnull String literal) {
+        public Literal(@Nonnull T value, @Nonnull Column<T> column) {
             this.value = value;
-            this.literal = literal;
+            this.literal = column.format(value);
         }
 
         @Nonnull

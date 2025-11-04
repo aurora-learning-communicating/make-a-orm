@@ -1,21 +1,12 @@
 package com.steiner.make_a_orm.where;
 
-import com.steiner.make_a_orm.column.Column;
+import com.steiner.make_a_orm.IToSQL;
 import jakarta.annotation.Nonnull;
 
-/**
- * column `condition` value
- */
-public abstract class WhereClause extends WhereStatement {
+public class WhereClause implements IToSQL {
     @Nonnull
-    public Column<?> column;
-
-    public WhereClause(@Nonnull Column<?> column) {
-        this(true, column);
-    }
-
-    public WhereClause(boolean shouldInject, @Nonnull Column<?> column) {
-        super(shouldInject, -1);
-        this.column = column;
+    @Override
+    public String toSQL() {
+        return "";
     }
 }

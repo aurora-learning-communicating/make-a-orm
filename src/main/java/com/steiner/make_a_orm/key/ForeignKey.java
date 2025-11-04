@@ -40,7 +40,7 @@ public class ForeignKey extends Key {
 
         stringBuilder.append("reference")
                 .append(" ")
-                .append(Quote.quoteTableName(referenceColumn.getTable().name))
+                .append(Quote.quoteTableName(referenceColumn.fromTable.name))
                 .append(" ")
                 .append("(")
                 .append(Quote.quoteColumnName(referenceColumn.name))

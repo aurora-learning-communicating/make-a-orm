@@ -3,8 +3,6 @@ package com.steiner.make_a_orm.column;
 import com.steiner.make_a_orm.IToSQL;
 import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.exception.SQLRuntimeException;
-import com.steiner.make_a_orm.key.Key;
-import com.steiner.make_a_orm.key.PrimaryKey;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.util.DefaultExpression;
 import com.steiner.make_a_orm.util.Quote;
@@ -24,8 +22,8 @@ public abstract class Column<T> implements IToSQL {
     public abstract int sqlType();
     public abstract void write(@Nonnull PreparedStatement statement, int index, @Nonnull T value) throws SQLException;
 
-    @Nullable
-    private Table fromTable; // late
+    @Nonnull
+    public Table fromTable;
     @Nonnull
     public String name;
 
@@ -38,9 +36,9 @@ public abstract class Column<T> implements IToSQL {
     @Nullable
     public DefaultExpression defaultExpression;
 
-    public Column(@Nonnull String name) {
+    public Column(@Nonnull String name, @Nonnull Table fromTable) {
         this.name = name;
-        this.fromTable = null;
+        this.fromTable = fromTable;
         this.isPrimaryKey = false;
         this.isAutoIncrement = false;
         this.defaultExpression = null;
@@ -49,43 +47,41 @@ public abstract class Column<T> implements IToSQL {
     }
 
     @Nonnull
-    public Table getTable() {
-        return Objects.requireNonNull(fromTable);
-    }
-
-    public void setTable(@Nonnull Table table) {
-        this.fromTable = table;
-    }
-
-    // TODO: nullable
-    @Nonnull
     public Column<T> nullable() {
         this.isNullable = true;
-        this.defaultExpression = DefaultExpression.Null;
         return this;
     }
 
-    // TODO: unique
     @Nonnull
     public Column<T> uniqueIndex() {
         this.isUnique = true;
         return this;
     }
 
-    // TODO: autoIncrement after primaryKey
-    // TODO: withDefault
+    @Nonnull
+    public Column<T> withDefaultNull() {
+        if (isAutoIncrement) {
+            throw new SQLBuildException("cannot both set default and autoincrement", null);
+        }
+
+        if (!isNullable) {
+            throw new SQLBuildException("cannot set default null while it is not nullable", null);
+        }
+
+        this.defaultExpression = DefaultExpression.Null;
+        return this;
+    }
+
     @Nonnull
     public Column<T> withDefault(@Nonnull T value) {
         if (isAutoIncrement) {
             throw new SQLBuildException("cannot both set default and autoincrement", null);
         }
 
-        Objects.requireNonNull(value);
-        this.defaultExpression = new DefaultExpression.Literal<>(value, this.format(value));
+        this.defaultExpression = new DefaultExpression.Literal<>(value, this);
         return this;
     }
 
-    // TODO: withDefaultExpression
     @Nonnull
     public Column<T> withDefaultExpression(@Nonnull DefaultExpression.Expression expression) {
         if (isAutoIncrement) {

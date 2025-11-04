@@ -52,7 +52,7 @@ public abstract class PrimaryKey extends Key {
         public Composite(@Nonnull List<Column<?>> columns) {
             this.columns = columns;
 
-            long tableCount = columns.stream().map(Column::getTable).distinct().count();
+            long tableCount = columns.stream().map(column -> column.fromTable).distinct().count();
             if (tableCount != columns.size()) {
                 throw new SQLBuildException("in composite key, all the column must from the same table", null);
             }

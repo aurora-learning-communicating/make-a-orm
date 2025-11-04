@@ -22,6 +22,10 @@ dependencies {
     // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
     testImplementation("ch.qos.logback:logback-classic:1.5.16")
 
+    // https://mvnrepository.com/artifact/org.jetbrains.exposed/exposed-core
+    testImplementation("org.jetbrains.exposed:exposed-core:0.61.0")
+    // https://mvnrepository.com/artifact/org.jetbrains.exposed/exposed-kotlin-datetime
+    testImplementation("org.jetbrains.exposed:exposed-kotlin-datetime:0.61.0")
 }
 
 tasks.test {

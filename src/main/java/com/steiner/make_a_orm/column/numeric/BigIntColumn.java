@@ -1,5 +1,6 @@
 package com.steiner.make_a_orm.column.numeric;
 
+import com.steiner.make_a_orm.table.Table;
 import jakarta.annotation.Nonnull;
 
 import java.sql.PreparedStatement;
@@ -7,8 +8,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 public class BigIntColumn extends NumericColumn<Long> {
-    public BigIntColumn(@Nonnull String name) {
-        super(name);
+    public BigIntColumn(@Nonnull String name, @Nonnull Table fromTable) {
+        super(name, fromTable);
     }
 
     @Nonnull

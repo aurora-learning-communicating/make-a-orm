@@ -48,27 +48,27 @@ public abstract class Table implements IToSQL {
     // register column
     @Nonnull
     protected BigIntColumn bigint(@Nonnull String name) {
-        return registerColumn(new BigIntColumn(name));
+        return registerColumn(new BigIntColumn(name, this));
     }
 
     protected DoubleColumn float64(@Nonnull String name) {
-        return registerColumn(new DoubleColumn(name));
+        return registerColumn(new DoubleColumn(name, this));
     }
 
     protected FloatColumn float32(@Nonnull String name) {
-        return registerColumn(new FloatColumn(name));
+        return registerColumn(new FloatColumn(name, this));
     }
 
     protected IntegerColumn integer(@Nonnull String name) {
-        return registerColumn(new IntegerColumn(name));
+        return registerColumn(new IntegerColumn(name, this));
     }
 
     protected SmallIntColumn smallint(@Nonnull String name) {
-        return registerColumn(new SmallIntColumn(name));
+        return registerColumn(new SmallIntColumn(name, this));
     }
 
     protected TinyIntColumn tinyint(@Nonnull String name) {
-        return registerColumn(new TinyIntColumn(name));
+        return registerColumn(new TinyIntColumn(name, this));
     }
 
     protected CharacterColumn character(@Nonnull String name, int length) {
@@ -182,7 +182,7 @@ public abstract class Table implements IToSQL {
 
         // 检查 外键
         foreignKeys.forEach(foreignKey -> {
-            if (foreignKey.referenceColumn.getTable() == this) {
+            if (foreignKey.referenceColumn.fromTable == this) {
                 throw new SQLBuildException("cannot reference self table", null);
             }
         });
@@ -192,7 +192,6 @@ public abstract class Table implements IToSQL {
 
     private <T extends Column<?>> T registerColumn(T column) {
         columns.add(column);
-        column.setTable(this);
         return column;
     }
 }
