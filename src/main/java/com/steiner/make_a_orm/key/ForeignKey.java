@@ -1,25 +1,26 @@
 package com.steiner.make_a_orm.key;
 
 import com.steiner.make_a_orm.column.Column;
+import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.util.Quote;
 import jakarta.annotation.Nonnull;
 
-public class ForeignKey extends Key {
+public class ForeignKey<T extends Column<?>> extends Key {
     @Nonnull
     String name;
 
     boolean isNullable;
 
     @Nonnull
-    public Column<?> referenceColumn;
+    public T referenceColumn;
 
-    public ForeignKey(@Nonnull String name, @Nonnull Column<?> referenceColumn) {
+    public ForeignKey(@Nonnull String name, @Nonnull T referenceColumn) {
         this.name = name;
         this.referenceColumn = referenceColumn;
         this.isNullable = false;
     }
 
-    public ForeignKey nullable() {
+    public ForeignKey<T> nullable() {
         this.isNullable = true;
         return this;
     }
@@ -38,7 +39,7 @@ public class ForeignKey extends Key {
                     .append(" ");
         }
 
-        stringBuilder.append("reference")
+        stringBuilder.append("references")
                 .append(" ")
                 .append(Quote.quoteTableName(referenceColumn.fromTable.name))
                 .append(" ")

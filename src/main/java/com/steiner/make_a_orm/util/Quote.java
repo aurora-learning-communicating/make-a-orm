@@ -5,7 +5,7 @@ import jakarta.annotation.Nonnull;
 public class Quote {
     public static final String formatLiteral = "'%s'";
     public static final String formatIdentify = "`%s`";
-    public static final String autoIncrement = "autoincrement";
+    public static final String autoIncrement = "auto_increment";
     public static final String slot = "?";
 
     @Nonnull
@@ -22,7 +22,6 @@ public class Quote {
     public static String quoteKeyName(@Nonnull String name) {
         return name;
     }
-
 
     @Nonnull
     public static String quoteString(@Nonnull String string) {

@@ -6,6 +6,7 @@ import com.steiner.make_a_orm.exception.SQLRuntimeException;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.util.DefaultExpression;
 import com.steiner.make_a_orm.util.Quote;
+import com.steiner.make_a_orm.where.WhereStatement;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -13,6 +14,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public abstract class Column<T> implements IToSQL {
     @Nonnull
@@ -47,19 +50,20 @@ public abstract class Column<T> implements IToSQL {
     }
 
     @Nonnull
-    public Column<T> nullable() {
+    public <E extends Column<T>> E nullable() {
         this.isNullable = true;
-        return this;
+
+        return (E) this;
     }
 
     @Nonnull
-    public Column<T> uniqueIndex() {
+    public <E extends Column<T>> E uniqueIndex() {
         this.isUnique = true;
-        return this;
+        return (E) this;
     }
 
     @Nonnull
-    public Column<T> withDefaultNull() {
+    public <E extends Column<T>> E withDefaultNull() {
         if (isAutoIncrement) {
             throw new SQLBuildException("cannot both set default and autoincrement", null);
         }
@@ -69,31 +73,38 @@ public abstract class Column<T> implements IToSQL {
         }
 
         this.defaultExpression = DefaultExpression.Null;
-        return this;
+        return (E) this;
     }
 
     @Nonnull
-    public Column<T> withDefault(@Nonnull T value) {
+    public <E extends Column<T>> E withDefault(@Nonnull T value) {
         if (isAutoIncrement) {
             throw new SQLBuildException("cannot both set default and autoincrement", null);
         }
 
         this.defaultExpression = new DefaultExpression.Literal<>(value, this);
-        return this;
+        return (E) this;
     }
 
     @Nonnull
-    public Column<T> withDefaultExpression(@Nonnull DefaultExpression.Expression expression) {
+    public <E extends Column<T>> E withDefaultExpression(@Nonnull DefaultExpression.Expression expression) {
         if (isAutoIncrement) {
             throw new SQLBuildException("cannot both set default and autoincrement", null);
         }
 
         this.defaultExpression = expression;
-        return this;
+        return (E) this;
     }
 
     public boolean hasDefault() {
         return this.defaultExpression != null;
+    }
+
+    // FIXME
+    public <E extends Column<T>> E check(@Nonnull String name, Function<E, WhereStatement> function) {
+        E column = (E) this;
+        fromTable.check(name, function.apply(column));
+        return column;
     }
 
     @Nullable
