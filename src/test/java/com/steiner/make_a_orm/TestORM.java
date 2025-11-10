@@ -82,6 +82,17 @@ public class TestORM {
     // TODO: 测试 check 限制
     @Test
     public void testCheck() {
+        var table = new IntIdTable("items") {
+            IntegerColumn value1 = integer("value1");
+            IntegerColumn value2 = integer("value2").check("ck_1", (column) -> {
+                return column.greater(1);
+            });
 
+            CharacterVaryingColumn value3 = characterVarying("value3", 20).check("ck_2", (column) -> {
+                return column.like("%hello%");
+            });
+        };
+
+        System.out.println(table.toSQL());
     }
 }

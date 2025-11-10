@@ -1,5 +1,6 @@
 package com.steiner.make_a_orm.column.numeric;
 
+import com.steiner.make_a_orm.column.trait.predicate.*;
 import com.steiner.make_a_orm.table.Table;
 import jakarta.annotation.Nonnull;
 
@@ -7,7 +8,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 
-public class SmallIntColumn extends NumericColumn<Short> {
+public class SmallIntColumn extends NumericColumn<Short>
+        implements
+        IEqual<Short, SmallIntColumn>,
+        ICompare<Short, SmallIntColumn>,
+        IBetween<Short, SmallIntColumn>,
+        IInList<Short, SmallIntColumn>,
+        INullOrNot<Short, SmallIntColumn> {
     public SmallIntColumn(@Nonnull String name, @Nonnull Table fromTable) {
         super(name, fromTable);
     }
@@ -26,5 +33,11 @@ public class SmallIntColumn extends NumericColumn<Short> {
     @Override
     public void write(@Nonnull PreparedStatement statement, int index, @Nonnull Short value) throws SQLException {
         statement.setShort(index, value);
+    }
+
+    @Nonnull
+    @Override
+    public SmallIntColumn self() {
+        return this;
     }
 }

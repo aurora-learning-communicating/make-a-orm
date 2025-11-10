@@ -6,7 +6,7 @@ import com.steiner.make_a_orm.exception.SQLRuntimeException;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.util.DefaultExpression;
 import com.steiner.make_a_orm.util.Quote;
-import com.steiner.make_a_orm.where.WhereStatement;
+import com.steiner.make_a_orm.where.statement.WhereStatement;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -15,7 +15,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public abstract class Column<T> implements IToSQL {
     @Nonnull
@@ -100,8 +99,7 @@ public abstract class Column<T> implements IToSQL {
         return this.defaultExpression != null;
     }
 
-    // FIXME
-    public <E extends Column<T>> E check(@Nonnull String name, Function<E, WhereStatement> function) {
+    public <E extends Column<T>> E check(@Nonnull String name, @Nonnull Function<E, WhereStatement> function) {
         E column = (E) this;
         fromTable.check(name, function.apply(column));
         return column;

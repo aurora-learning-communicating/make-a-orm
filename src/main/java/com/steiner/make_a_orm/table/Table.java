@@ -10,7 +10,8 @@ import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.key.ForeignKey;
 import com.steiner.make_a_orm.key.PrimaryKey;
 import com.steiner.make_a_orm.util.Quote;
-import com.steiner.make_a_orm.where.WhereStatement;
+import com.steiner.make_a_orm.where.WhereTopStatement;
+import com.steiner.make_a_orm.where.statement.WhereStatement;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -116,7 +117,8 @@ public abstract class Table implements IToSQL {
 
     // FIXME
     public void check(@Nonnull String name, @Nonnull WhereStatement whereStatement) {
-        this.checks.add(new Check(name, whereStatement));
+        WhereTopStatement topStatement = new WhereTopStatement(whereStatement);
+        this.checks.add(new Check(name, topStatement));
     }
 
     @Override
