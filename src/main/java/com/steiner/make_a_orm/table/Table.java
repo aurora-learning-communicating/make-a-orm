@@ -10,6 +10,7 @@ import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.key.ForeignKey;
 import com.steiner.make_a_orm.key.PrimaryKey;
 import com.steiner.make_a_orm.util.Quote;
+import com.steiner.make_a_orm.where.Errors;
 import com.steiner.make_a_orm.where.WhereTopStatement;
 import com.steiner.make_a_orm.where.statement.WhereStatement;
 import jakarta.annotation.Nonnull;
@@ -87,7 +88,7 @@ public abstract class Table implements IToSQL {
     // TODO: reference
     protected <T extends Column<?>> ForeignKey<T> reference(@Nonnull String name, @Nonnull T fromColumn) {
         if (!fromColumn.isUnique && !fromColumn.isPrimaryKey) {
-            throw new SQLBuildException("cannot create foreign key on a non-primary or non-unique column", null);
+            throw Errors.ForeignKeyError;
         }
 
         ForeignKey<T> key = new ForeignKey<>(name, fromColumn);
@@ -163,13 +164,13 @@ public abstract class Table implements IToSQL {
                 String primaryKeyName = key.fromColumn.name;
                 long count = columns.stream().filter(column -> column.name.equals(primaryKeyName)).count();
                 if (count >= 2) {
-                    throw new SQLBuildException("duplicate column name %s".formatted(Quote.quoteColumnName(primaryKeyName)), null);
+                    throw new SQLBuildException("duplicate column name %s".formatted(Quote.quoteColumnName(primaryKeyName)));
                 }
             }
         } else {
             long count = columns.stream().map(column -> column.name).distinct().count();
             if (count != columns.size()) {
-                throw new SQLBuildException("duplicate column name", null);
+                throw new SQLBuildException("duplicate column name");
             }
         }
 
@@ -179,20 +180,20 @@ public abstract class Table implements IToSQL {
         if (primaryKey != null) {
             Optional<Column<?>> autoIncrementColumn = columns.stream().filter(column -> column.isAutoIncrement && !column.isPrimaryKey).findFirst();
             if (autoIncrementColumn.isPresent()) {
-                throw new SQLBuildException("cannot be multi autoincrement column", null);
+                throw Errors.MultiAutoIncrement;
             }
         }
 
         // 不能有多个自增字段
         long autoIncrementCount = columns.stream().filter(column -> column.isAutoIncrement).count();
         if (autoIncrementCount >= 2) {
-            throw new SQLBuildException("cannot be multi autoincrement column", null);
+            throw Errors.MultiAutoIncrement;
         }
 
         // 检查 外键
         foreignKeys.forEach(foreignKey -> {
             if (foreignKey.referenceColumn.fromTable == this) {
-                throw new SQLBuildException("cannot reference self table", null);
+                throw Errors.ReferenceSelf;
             }
         });
     }

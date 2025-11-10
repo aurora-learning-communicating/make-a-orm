@@ -2,10 +2,10 @@ package com.steiner.make_a_orm.column;
 
 import com.steiner.make_a_orm.IToSQL;
 import com.steiner.make_a_orm.exception.SQLBuildException;
-import com.steiner.make_a_orm.exception.SQLRuntimeException;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.util.DefaultExpression;
 import com.steiner.make_a_orm.util.Quote;
+import com.steiner.make_a_orm.where.Errors;
 import com.steiner.make_a_orm.where.statement.WhereStatement;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -64,11 +64,11 @@ public abstract class Column<T> implements IToSQL {
     @Nonnull
     public <E extends Column<T>> E withDefaultNull() {
         if (isAutoIncrement) {
-            throw new SQLBuildException("cannot both set default and autoincrement", null);
+            throw Errors.BothDefaultAndAutoIncrement;
         }
 
         if (!isNullable) {
-            throw new SQLBuildException("cannot set default null while it is not nullable", null);
+            throw Errors.NotNullable;
         }
 
         this.defaultExpression = DefaultExpression.Null;
@@ -78,7 +78,7 @@ public abstract class Column<T> implements IToSQL {
     @Nonnull
     public <E extends Column<T>> E withDefault(@Nonnull T value) {
         if (isAutoIncrement) {
-            throw new SQLBuildException("cannot both set default and autoincrement", null);
+            throw Errors.BothDefaultAndAutoIncrement;
         }
 
         this.defaultExpression = new DefaultExpression.Literal<>(value, this);
@@ -88,7 +88,7 @@ public abstract class Column<T> implements IToSQL {
     @Nonnull
     public <E extends Column<T>> E withDefaultExpression(@Nonnull DefaultExpression.Expression expression) {
         if (isAutoIncrement) {
-            throw new SQLBuildException("cannot both set default and autoincrement", null);
+            throw Errors.BothDefaultAndAutoIncrement;
         }
 
         this.defaultExpression = expression;
@@ -106,34 +106,23 @@ public abstract class Column<T> implements IToSQL {
     }
 
     @Nullable
-    public final T read(@Nonnull ResultSet resultSet) {
-        try {
-            return (T) resultSet.getObject(this.name);
-        } catch (SQLException e) {
-            throw new SQLRuntimeException("error when read", e);
-        }
+    public final T read(@Nonnull ResultSet resultSet) throws SQLException{
+        return (T) resultSet.getObject(this.name);
     }
 
 
-    public final void writeDefault(@Nonnull PreparedStatement statement, int index) {
+    public final void writeDefault(@Nonnull PreparedStatement statement, int index) throws SQLException {
         if (isPrimaryKey && isAutoIncrement) {
-            throw new SQLBuildException("do not set value on a primary key and autoincrement column", null);
+            throw Errors.SetOnPrimary;
         }
 
         if (!hasDefault()) {
-            throw new SQLBuildException("there is no default value on the column %s".formatted(name), null);
+            throw new SQLBuildException("there is no default value on the column %s".formatted(name));
         }
 
-        try {
-            Objects.requireNonNull(this.defaultExpression);
-            // TODO: when meeting expression
-            this.defaultExpression.writeIntoStatement(this, statement, index);
-        } catch (SQLException e) {
-            throw new SQLRuntimeException("error when `setObject`", e);
-        }
+        Objects.requireNonNull(this.defaultExpression);
+        this.defaultExpression.writeIntoStatement(this, statement, index);
     }
-
-
 
     @Nonnull
     @Override
