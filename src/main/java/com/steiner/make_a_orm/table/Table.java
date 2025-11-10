@@ -41,8 +41,6 @@ public abstract class Table implements IToSQL {
         this.foreignKeys = new ArrayList<>();
         this.columns = new ArrayList<>();
         this.checks = new ArrayList<>();
-
-        // FIXME: this.primaryKey = primaryKey();
     }
 
     @Nullable

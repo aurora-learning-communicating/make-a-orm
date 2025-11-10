@@ -17,6 +17,6 @@ public abstract class IntIdTable extends IdTable {
     @Nullable
     @Override
     public PrimaryKey.Single<IntegerColumn> primaryKey() {
-        return new PrimaryKey.Single<>(integer("id")).autoIncrement();
+        return new PrimaryKey.Single<>(integer(idName)).autoIncrement();
     }
 }

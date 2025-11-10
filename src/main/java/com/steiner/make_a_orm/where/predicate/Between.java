@@ -59,6 +59,11 @@ public class Between<T, E extends Column<T>> extends WherePredicate<T, E> {
     @Override
     public String toSQL() {
         String format = "%s between %s and %";
-        return format.formatted(Quote.quoteColumnName(column.name), Quote.slot, Quote.slot);
+
+        if (isInCheck) {
+            return format.formatted(Quote.quoteColumnName(column.name), column.format(min), column.format(max));
+        } else {
+            return format.formatted(Quote.quoteColumnName(column.name), Quote.slot, Quote.slot);
+        }
     }
 }

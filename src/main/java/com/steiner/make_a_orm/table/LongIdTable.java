@@ -17,6 +17,6 @@ public abstract class LongIdTable extends IdTable {
     @Nullable
     @Override
     public PrimaryKey.Single<BigIntColumn> primaryKey() {
-        return new PrimaryKey.Single<>(bigint("id")).autoIncrement();
+        return new PrimaryKey.Single<>(bigint(idName)).autoIncrement();
     }
 }

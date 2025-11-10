@@ -31,6 +31,12 @@ public class Compare<T extends Comparable<T>, E extends Column<T>> extends Where
     @Nonnull
     @Override
     public String toSQL() {
-        return "%s %s %s".formatted(Quote.quoteColumnName(column.name), comparator.sign, Quote.slot);
+        String format = "%s %s %s";
+
+        if (isInCheck) {
+            return format.formatted(Quote.quoteColumnName(column.name), comparator.sign, column.format(literal));
+        } else {
+            return format.formatted(Quote.quoteColumnName(column.name), comparator.sign, Quote.slot);
+        }
     }
 }

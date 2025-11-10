@@ -34,10 +34,18 @@ public class InList<T, E extends Column<T>> extends WherePredicate<T, E> {
     public String toSQL() {
         String format = "%s in (%s)";
 
-        String slot = list.stream()
-                .map(value -> Quote.slot)
-                .collect(Collectors.joining(", "));
+        if (isInCheck) {
+            String listString = list.stream()
+                    .map(value -> column.format(value))
+                    .collect(Collectors.joining(", "));
 
-        return format.formatted(Quote.quoteColumnName(column.name), slot);
+            return format.formatted(Quote.quoteColumnName(column.name), listString);
+        } else {
+            String slot = list.stream()
+                    .map(value -> Quote.slot)
+                    .collect(Collectors.joining(", "));
+
+            return format.formatted(Quote.quoteColumnName(column.name), slot);
+        }
     }
 }

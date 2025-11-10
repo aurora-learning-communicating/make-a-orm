@@ -32,6 +32,11 @@ public class Equal<T, E extends Column<T>> extends WherePredicate<T, E> {
     @Override
     public String toSQL() {
         String format = "%s %s %s";
-        return format.formatted(Quote.quoteColumnName(column.name), equality.sign, Quote.slot);
+
+        if (isInCheck) {
+            return format.formatted(Quote.quoteColumnName(column.name), equality.sign, column.format(literal));
+        } else {
+            return format.formatted(Quote.quoteColumnName(column.name), equality.sign, Quote.slot);
+        }
     }
 }

@@ -14,6 +14,7 @@ public class Check implements IToSQL {
     public Check(@Nonnull String name, @Nonnull WhereTopStatement whereStatement) {
         this.name = name;
         this.whereStatement = whereStatement;
+        this.whereStatement.setInCheck();
     }
 
     @Nonnull

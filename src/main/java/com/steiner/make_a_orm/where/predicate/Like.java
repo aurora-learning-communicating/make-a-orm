@@ -27,6 +27,12 @@ public class Like<E extends StringColumn> extends WherePredicate<String, E> {
     @Nonnull
     @Override
     public String toSQL() {
-        return "%s like %s".formatted(Quote.quoteColumnName(column.name), Quote.slot);
+        String format = "%s like %s";
+        if (isInCheck) {
+            return format.formatted(Quote.quoteColumnName(column.name), column.format(pattern));
+        } else {
+            return format.formatted(Quote.quoteColumnName(column.name), Quote.slot);
+        }
+
     }
 }

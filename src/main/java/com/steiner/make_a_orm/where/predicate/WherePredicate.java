@@ -9,6 +9,8 @@ public abstract class WherePredicate<T, E extends Column<T>> extends WhereStatem
     @Nonnull
     public E column;
 
+    public boolean isInCheck;
+
     public WherePredicate(@Nonnull E column) {
         this(true, column);
     }
@@ -16,5 +18,6 @@ public abstract class WherePredicate<T, E extends Column<T>> extends WhereStatem
     public WherePredicate(boolean writable, @Nonnull E column) {
         super(writable);
         this.column = column;
+        this.isInCheck = false;
     }
 }
