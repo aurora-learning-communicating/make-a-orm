@@ -9,8 +9,9 @@ import com.steiner.make_a_orm.column.string.TextColumn;
 import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.key.ForeignKey;
 import com.steiner.make_a_orm.key.PrimaryKey;
+import com.steiner.make_a_orm.statement.select.SelectStatement;
 import com.steiner.make_a_orm.util.Quote;
-import com.steiner.make_a_orm.where.Errors;
+import com.steiner.make_a_orm.Errors;
 import com.steiner.make_a_orm.where.WhereTopStatement;
 import com.steiner.make_a_orm.where.statement.WhereStatement;
 import jakarta.annotation.Nonnull;
@@ -96,6 +97,22 @@ public abstract class Table implements IToSQL {
         return key;
     }
 
+
+    // For Query
+    @Nonnull
+    public SelectStatement select(@Nonnull Column<?> column, @Nonnull Column<?>... otherColumns) {
+        List<Column<?>> columns = new ArrayList<>();
+        columns.add(column);
+        columns.addAll(List.of(otherColumns));
+
+        return new SelectStatement(this, columns.toArray(Column<?>[]::new));
+    }
+
+    @Nonnull
+    public SelectStatement selectAll() {
+        return new SelectStatement(this, columns.toArray(Column<?>[]::new));
+    }
+
 //    protected PrimaryKey.Composite primaryKey(Column<?> first, Column<?> second, Column<?>... rest) {
 //        List<Column<?>> columns = new ArrayList<>();
 //        columns.add(first);
@@ -114,7 +131,6 @@ public abstract class Table implements IToSQL {
 //        return key;
 //    }
 
-    // FIXME
     public void check(@Nonnull String name, @Nonnull WhereStatement whereStatement) {
         WhereTopStatement topStatement = new WhereTopStatement(whereStatement);
         this.checks.add(new Check(name, topStatement));

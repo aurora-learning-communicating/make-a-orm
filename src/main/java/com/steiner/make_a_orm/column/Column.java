@@ -5,7 +5,7 @@ import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.util.DefaultExpression;
 import com.steiner.make_a_orm.util.Quote;
-import com.steiner.make_a_orm.where.Errors;
+import com.steiner.make_a_orm.Errors;
 import com.steiner.make_a_orm.where.statement.WhereStatement;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;

@@ -1,6 +1,7 @@
-package com.steiner.make_a_orm.where;
+package com.steiner.make_a_orm;
 
 import com.steiner.make_a_orm.exception.SQLBuildException;
+import com.steiner.make_a_orm.exception.SQLRuntimeException;
 
 public class Errors {
     public static SQLBuildException BothDefaultAndAutoIncrement = new SQLBuildException("cannot both set default and autoincrement");
@@ -14,5 +15,10 @@ public class Errors {
     public static SQLBuildException ForeignKeyError = new SQLBuildException("cannot create foreign key on a non-primary or non-unique column");
     public static SQLBuildException MultiAutoIncrement = new SQLBuildException("cannot be multi autoincrement column");
     public static SQLBuildException ReferenceSelf = new SQLBuildException("cannot reference self table");
+
+    public static SQLBuildException PrimaryNotNull = new SQLBuildException("consider that value of primary key cannot be null, so I forbid this case, cannot set the primary key with null");
+    public static SQLBuildException CompositeKeyDifferent = new SQLBuildException("in composite key, all the column must from the same table");
+
+    public static SQLRuntimeException GetNull = new SQLRuntimeException("the result is null, but using the nonnull constraint");
 
 }

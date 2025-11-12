@@ -33,23 +33,14 @@ public class Database {
         }
 
         public Database build() {
-            Field[] fields = this.getClass().getDeclaredFields();
-            for (Field field: fields) {
-                try {
-                    Object value = field.get(this);
-                    if (value == null) {
-                        throw new SQLInitializeException("there is null field in the builder");
-                    }
-                } catch (IllegalAccessException exception) {
-                    throw new SQLInitializeException("unknown error").cause(exception);
-                }
-            }
+            Objects.requireNonNull(driver, "driver cannot be null");
+            Objects.requireNonNull(url, "url cannot be null");
 
             Database database = new Database(
                     Objects.requireNonNull(driver),
                     Objects.requireNonNull(url),
-                    Objects.requireNonNull(username),
-                    Objects.requireNonNull(password));
+                    username,
+                    password);
 
             try {
                 DriverManager.registerDriver(database.driver);
@@ -71,14 +62,14 @@ public class Database {
     public Driver driver;
     @Nonnull
     public String url;
-    @Nonnull
+    @Nullable
     public String username;
-    @Nonnull
+    @Nullable
     public String password;
     @Nullable
     public Connection connection;
 
-    private Database(@Nonnull Driver driver, @Nonnull String url, @Nonnull String username, @Nonnull String password) {
+    private Database(@Nonnull Driver driver, @Nonnull String url, @Nullable String username, @Nullable String password) {
         this.driver = driver;
         this.url = url;
         this.username = username;

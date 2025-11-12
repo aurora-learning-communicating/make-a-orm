@@ -4,6 +4,9 @@ import com.steiner.make_a_orm.IToSQL;
 import com.steiner.make_a_orm.where.predicate.WherePredicate;
 import com.steiner.make_a_orm.where.statement.WhereStatement;
 import jakarta.annotation.Nonnull;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.stream.Collectors;
 
 public class WhereTopStatement implements IToSQL {
@@ -24,6 +27,24 @@ public class WhereTopStatement implements IToSQL {
                     .filter(stat -> stat instanceof WherePredicate<?,?>)
                     .map(stat -> (WherePredicate<?, ?>) stat)
                     .forEach(predicate -> predicate.isInCheck = true);
+        }
+    }
+
+    public void write(@Nonnull PreparedStatement preparedStatement) throws SQLException {
+        int startIndex = 1;
+
+        if (statement.writable) {
+            statement.setWriteIndex(startIndex);
+            startIndex = statement.writeReturning(preparedStatement);
+        }
+
+        if (statement.otherStatements != null) {
+            for (WhereStatement whereStatement: statement.otherStatements) {
+                if (whereStatement.writable) {
+                    whereStatement.setWriteIndex(startIndex);
+                    startIndex = statement.writeReturning(preparedStatement);
+                }
+            }
         }
     }
 

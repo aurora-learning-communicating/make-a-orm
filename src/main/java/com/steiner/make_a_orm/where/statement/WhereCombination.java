@@ -1,6 +1,6 @@
 package com.steiner.make_a_orm.where.statement;
 
-import com.steiner.make_a_orm.where.Errors;
+import com.steiner.make_a_orm.Errors;
 import com.steiner.make_a_orm.where.operator.Logical;
 import jakarta.annotation.Nonnull;
 

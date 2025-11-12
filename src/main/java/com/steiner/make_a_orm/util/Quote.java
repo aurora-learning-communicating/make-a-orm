@@ -4,7 +4,7 @@ import jakarta.annotation.Nonnull;
 
 public class Quote {
     public static final String formatLiteral = "'%s'";
-    public static final String formatIdentify = "`%s`";
+    public static final String formatIdentify = "\"%s\"";
     public static final String autoIncrement = "auto_increment";
     public static final String slot = "?";
 
