@@ -2,33 +2,91 @@ package com.steiner.make_a_orm
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.Test
 
-object Scores: IntIdTable("scores") {
-    val score = integer("score").uniqueIndex()
-}
-
-object Users: IntIdTable("users") {
-    val name = varchar("name", 50)
-    val password = varchar("password", 50).check {
-        it like "hello"
+class TestExposed {
+    object Numbers: IntIdTable("numbers") {
+        val column1 = integer("integer")
+        val column2 = double("double")
+        val column3 = short("short")
+        val column4 = byte("byte")
     }
 
-    val score = reference("score", Scores.score)
-}
+    val ipAddress = "192.168.1.10"
+    val database = Database.connect(url = "jdbc:postgresql://$ipAddress/orm-test", user = "steiner", password = "779151714")
 
-class TestExposed {
     @Test
-    fun test() {
-        val database = Database.connect("jdbc:h2:mem:test", driver = "org.h2.Driver")
-
+    fun fakeData() {
         transaction(database) {
-            SchemaUtils.create(Scores, Users)
+            SchemaUtils.create(Numbers)
 
+            val numbers = 1..10
+
+            with (Numbers) {
+                for (number in numbers) {
+                    insert {
+                        it[column1] = number
+                        it[column2] = number.toDouble()
+                        it[column3] = number.toShort()
+                        it[column4] = number.toByte()
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun query() {
+        transaction(database) {
+            with (Numbers) {
+                selectAll().forEach {
+                    val value1 = it[column1]
+                    val value2 = it[column2]
+                    val value3 = it[column3]
+                    val value4 = it[column4]
+
+                    println("value1: ${value1.javaClass}, value2: ${value2.javaClass}, value3: ${value3.javaClass}, value4: ${value4.javaClass}")
+                }
+            }
+        }
+    }
+
+    object Table1: IntIdTable("table1") {
+        val value1 = integer("value1")
+    }
+
+    object Table2: IntIdTable("table2") {
+        val value1 = integer("value1")
+    }
+
+    fun queryWithMultiTable() {
+        transaction(database) {
+            SchemaUtils.create(Table1, Table2)
+
+            for (number in 1..10) {
+                Table1.insert {
+                    it[value1] = number
+                }
+
+                Table2.insert {
+                    it[value1] = number
+                }
+            }
+
+            Table1.select(Table2.value1).forEach { resultRow ->
+                println(resultRow[Table2.value1])
+            } // this should throw runtime error
+
+            Table1.selectAll().where {
+                Table1.value1.less(Table2.value1)
+            }.forEach {
+                println(it[Table2.value1])
+            }
         }
     }
 }
+

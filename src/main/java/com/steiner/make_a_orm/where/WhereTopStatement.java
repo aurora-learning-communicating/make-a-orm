@@ -42,7 +42,7 @@ public class WhereTopStatement implements IToSQL {
             for (WhereStatement whereStatement: statement.otherStatements) {
                 if (whereStatement.writable) {
                     whereStatement.setWriteIndex(startIndex);
-                    startIndex = statement.writeReturning(preparedStatement);
+                    startIndex = whereStatement.writeReturning(preparedStatement);
                 }
             }
         }
@@ -53,15 +53,15 @@ public class WhereTopStatement implements IToSQL {
     public String toSQL() {
         StringBuilder stringBuilder = new StringBuilder();
         String firstSQL = statement.toSQL();
-        stringBuilder.append(firstSQL).append(" ");
+        stringBuilder.append(firstSQL);
 
         if (statement.otherStatements != null) {
             String others = statement.otherStatements
                     .stream()
                     .map(WhereStatement::toSQL)
                     .collect(Collectors.joining(" "));
-
-            stringBuilder.append(others);
+            stringBuilder.append(" ")
+                    .append(others);
         }
 
         return stringBuilder.toString();

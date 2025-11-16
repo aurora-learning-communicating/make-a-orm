@@ -18,6 +18,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -101,6 +102,15 @@ public abstract class Table implements IToSQL {
     // For Query
     @Nonnull
     public SelectStatement select(@Nonnull Column<?> column, @Nonnull Column<?>... otherColumns) {
+        if (column.fromTable != this) {
+            throw Errors.TableNotTheSame;
+        }
+
+        boolean flag = Arrays.stream(otherColumns).anyMatch(col -> !col.fromTable.equals(this));
+        if (flag) {
+            throw Errors.TableNotTheSame;
+        }
+
         List<Column<?>> columns = new ArrayList<>();
         columns.add(column);
         columns.addAll(List.of(otherColumns));

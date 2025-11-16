@@ -10,7 +10,7 @@ public class SQLRuntimeException extends RuntimeException {
         super(message);
     }
 
-    public SQLRuntimeException cause(@Nonnull SQLException cause) {
+    public SQLRuntimeException cause(@Nonnull Throwable cause) {
         initCause(cause);
         return this;
     }
