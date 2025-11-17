@@ -24,6 +24,9 @@ public abstract class Column<T> implements IToSQL {
     public abstract int sqlType();
     public abstract void write(@Nonnull PreparedStatement statement, int index, @Nonnull T value) throws SQLException;
 
+    @Nullable
+    public abstract T read(@Nonnull ResultSet resultSet) throws SQLException;
+
     @Nonnull
     public Table fromTable;
     @Nonnull
@@ -105,11 +108,6 @@ public abstract class Column<T> implements IToSQL {
         return column;
     }
 
-    @Nullable
-    public final T read(@Nonnull ResultSet resultSet) throws SQLException{
-        return (T) resultSet.getObject(this.name);
-    }
-
 
     public final void writeDefault(@Nonnull PreparedStatement statement, int index) throws SQLException {
         if (isPrimaryKey && isAutoIncrement) {
@@ -129,7 +127,7 @@ public abstract class Column<T> implements IToSQL {
     public String toSQL() {
         StringBuilder stringBuilder = new StringBuilder();
         // 1. quote(name) type
-        stringBuilder.append(Quote.quoteColumnName(name))
+        stringBuilder.append(Quote.quoteColumnStandalone(this))
                 .append(" ")
                 .append(this.typeQuote());
         // 2. constraint
@@ -157,5 +155,10 @@ public abstract class Column<T> implements IToSQL {
 
 
         return stringBuilder.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return this.name.hashCode();
     }
 }

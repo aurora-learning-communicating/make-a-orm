@@ -1,7 +1,6 @@
 package com.steiner.make_a_orm.key;
 
 import com.steiner.make_a_orm.column.Column;
-import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.util.Quote;
 import jakarta.annotation.Nonnull;
 
@@ -29,7 +28,7 @@ public class ForeignKey<T extends Column<?>> extends Key {
     @Override
     public String toSQL() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(Quote.quoteColumnName(name))
+        stringBuilder.append(name)
                 .append(" ")
                 .append(referenceColumn.typeQuote())
                 .append(" ");
@@ -41,10 +40,10 @@ public class ForeignKey<T extends Column<?>> extends Key {
 
         stringBuilder.append("references")
                 .append(" ")
-                .append(Quote.quoteTableName(referenceColumn.fromTable.name))
+                .append(Quote.quoteTable(referenceColumn.fromTable))
                 .append(" ")
                 .append("(")
-                .append(Quote.quoteColumnName(referenceColumn.name))
+                .append(Quote.quoteColumnStandalone(referenceColumn))
                 .append(")");
 
         return stringBuilder.toString();

@@ -39,13 +39,13 @@ public class InList<T, E extends Column<T>> extends WherePredicate<T, E> {
                     .map(value -> column.format(value))
                     .collect(Collectors.joining(", "));
 
-            return format.formatted(Quote.quoteColumnName(column.name), listString);
+            return format.formatted(Quote.quoteColumnStandalone(column), listString);
         } else {
             String slot = list.stream()
                     .map(value -> Quote.slot)
                     .collect(Collectors.joining(", "));
 
-            return format.formatted(Quote.quoteColumnName(column.name), slot);
+            return format.formatted(Quote.quoteColumnStandalone(column), slot);
         }
     }
 }

@@ -10,19 +10,27 @@ import org.junit.jupiter.api.Test
 
 class TestExposed {
     object Numbers: IntIdTable("numbers") {
-        val column1 = integer("integer")
-        val column2 = double("double")
-        val column3 = short("short")
-        val column4 = byte("byte")
+        val column1 = integer("integer").default(1)
+        val column2 = double("double").default(1.1)
+        val column3 = short("short").default(1)
+        val column4 = byte("byte").default(2)
     }
 
     val ipAddress = "192.168.1.10"
     val database = Database.connect(url = "jdbc:postgresql://$ipAddress/orm-test", user = "steiner", password = "779151714")
 
     @Test
+    fun createTable() {
+        transaction(database) {
+            SchemaUtils.drop(Numbers)
+            SchemaUtils.create(Numbers)
+        }
+    }
+
+    @Test
     fun fakeData() {
         transaction(database) {
-            SchemaUtils.create(Numbers)
+
 
             val numbers = 1..10
 

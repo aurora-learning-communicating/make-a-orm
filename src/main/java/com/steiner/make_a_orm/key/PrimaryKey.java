@@ -35,7 +35,7 @@ public abstract class PrimaryKey extends Key {
         @Nonnull
         @Override
         public String toSQL() {
-            return "primary key (%s)".formatted(Quote.quoteColumnName(fromColumn.name));
+            return "primary key (%s)".formatted(Quote.quoteColumnStandalone(fromColumn));
         }
     }
 
@@ -52,7 +52,7 @@ public abstract class PrimaryKey extends Key {
 
             this.columns = columns;
 
-            Table table = columns.get(0).fromTable;
+            Table table = columns.getFirst().fromTable;
             boolean flag = columns.stream().skip(1).allMatch(column -> column.fromTable.equals(table));
             if (!flag) {
                 throw Errors.CompositeKeyDifferent;
@@ -69,7 +69,7 @@ public abstract class PrimaryKey extends Key {
         @Nonnull
         @Override
         public String toSQL() {
-            String names = columns.stream().map(column -> Quote.quoteColumnName(column.name)).collect(Collectors.joining(","));
+            String names = columns.stream().map(column -> column.name).collect(Collectors.joining(","));
             return "primary key (%s)".formatted(names);
         }
     }

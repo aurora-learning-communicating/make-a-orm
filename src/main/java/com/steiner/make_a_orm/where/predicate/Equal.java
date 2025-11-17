@@ -34,9 +34,9 @@ public class Equal<T, E extends Column<T>> extends WherePredicate<T, E> {
         String format = "%s %s %s";
 
         if (isInCheck) {
-            return format.formatted(Quote.quoteColumnName(column.name), equality.sign, column.format(literal));
+            return format.formatted(Quote.quoteColumnStandalone(column), equality.sign, column.format(literal));
         } else {
-            return format.formatted(Quote.quoteColumnName(column.name), equality.sign, Quote.slot);
+            return format.formatted(Quote.quoteColumnStandalone(column), equality.sign, Quote.slot);
         }
     }
 }

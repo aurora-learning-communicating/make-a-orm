@@ -18,7 +18,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -161,10 +160,10 @@ public class SelectStatement implements Spliterator<ResultRow>, IToSQL {
     public String toSQL() {
         StringBuilder stringBuilder = new StringBuilder();
         String columnNames = sliceColumns.stream()
-                .map(column -> Quote.quoteColumnName(column.name))
+                .map(Quote::quoteColumnStandalone)
                 .collect(Collectors.joining(", "));
 
-        String select = "select %s from %s".formatted(columnNames, Quote.quoteTableName(table.name));
+        String select = "select %s from %s".formatted(columnNames, Quote.quoteTable(table));
         stringBuilder.append(select);
 
         if (whereStatement != null) {
@@ -173,7 +172,7 @@ public class SelectStatement implements Spliterator<ResultRow>, IToSQL {
         }
 
         if (orderBy != null) {
-            stringBuilder.append(" order by %s".formatted(Quote.quoteColumnName(orderBy.name)));
+            stringBuilder.append(" order by %s".formatted(Quote.quoteColumnStandalone(orderBy)));
         }
 
         if (reversed) {

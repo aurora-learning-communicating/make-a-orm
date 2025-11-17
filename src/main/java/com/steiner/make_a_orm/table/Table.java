@@ -9,9 +9,12 @@ import com.steiner.make_a_orm.column.string.TextColumn;
 import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.key.ForeignKey;
 import com.steiner.make_a_orm.key.PrimaryKey;
+import com.steiner.make_a_orm.statement.insert.InsertStatement;
+import com.steiner.make_a_orm.statement.select.ResultRow;
 import com.steiner.make_a_orm.statement.select.SelectStatement;
 import com.steiner.make_a_orm.util.Quote;
 import com.steiner.make_a_orm.Errors;
+import com.steiner.make_a_orm.util.StreamExtension;
 import com.steiner.make_a_orm.where.WhereTopStatement;
 import com.steiner.make_a_orm.where.statement.WhereStatement;
 import jakarta.annotation.Nonnull;
@@ -21,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public abstract class Table implements IToSQL {
@@ -123,23 +127,18 @@ public abstract class Table implements IToSQL {
         return new SelectStatement(this, columns.toArray(Column<?>[]::new));
     }
 
-//    protected PrimaryKey.Composite primaryKey(Column<?> first, Column<?> second, Column<?>... rest) {
-//        List<Column<?>> columns = new ArrayList<>();
-//        columns.add(first);
-//        columns.add(second);
-//
-//        columns.addAll(Arrays.asList(rest));
-//
-//        PrimaryKey.Composite key = new PrimaryKey.Composite(columns);
-//        this.primaryKey = key;
-//        return key;
-//    }
-//
-//    protected <T> PrimaryKey.Single<T> primaryKey(Column<T> column) {
-//        PrimaryKey.Single<T> key = new PrimaryKey.Single<>(column);
-//        this.primaryKey = key;
-//        return key;
-//    }
+    public void insert(@Nonnull Consumer<InsertStatement> consumer) {
+        InsertStatement insertStatement = new InsertStatement(this, null);
+        consumer.accept(insertStatement);
+        insertStatement.executeInsert();
+    }
+
+    @Nonnull
+    public ResultRow insertReturning(@Nonnull Consumer<InsertStatement> consumer, @Nonnull Column<?>... columns) {
+        InsertStatement insertStatement = new InsertStatement(this, columns);
+        consumer.accept(insertStatement);
+        return insertStatement.executeInsertReturning();
+    }
 
     public void check(@Nonnull String name, @Nonnull WhereStatement whereStatement) {
         WhereTopStatement topStatement = new WhereTopStatement(whereStatement);
@@ -153,7 +152,7 @@ public abstract class Table implements IToSQL {
         validateColumns();
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("create table if not exists %s".formatted(Quote.quoteTableName(name)));
+        stringBuilder.append("create table if not exists %s".formatted(Quote.quoteTable(this)));
         stringBuilder.append(" (\n\t");
 
         // if columns has primary key
@@ -187,10 +186,9 @@ public abstract class Table implements IToSQL {
         // 不允许重名
         if (primaryKey != null) {
             if (primaryKey instanceof PrimaryKey.Single<?> key) {
-                String primaryKeyName = key.fromColumn.name;
-                long count = columns.stream().filter(column -> column.name.equals(primaryKeyName)).count();
+                long count = columns.stream().filter(column -> column.equals(key.fromColumn)).count();
                 if (count >= 2) {
-                    throw new SQLBuildException("duplicate column name %s".formatted(Quote.quoteColumnName(primaryKeyName)));
+                    throw new SQLBuildException("duplicate column name %s".formatted(Quote.quoteColumnStandalone(key.fromColumn)));
                 }
             }
         } else {
@@ -236,7 +234,19 @@ public abstract class Table implements IToSQL {
         }
 
         if (obj instanceof Table table) {
-            return this.name.equals(table.name);
+            boolean theSameName = this.name.equals(table.name);
+            boolean theSameKey = false;
+
+            if (this.primaryKey == null && table.primaryKey == null) {
+                theSameKey = true;
+            } else if (this.primaryKey != null) {
+                theSameKey = this.primaryKey.equals(table.primaryKey);
+            }
+
+            // boolean theSameColumns = Stream.(columns.stream(), table.columns.stream()).allMatch((left, right) -> left.equals(right));
+            boolean theSameColumns = StreamExtension.zip(columns.stream(), table.columns.stream(), Object::equals).allMatch(flag -> flag);
+
+            return theSameName && theSameKey && theSameColumns;
         } else {
             return false;
         }

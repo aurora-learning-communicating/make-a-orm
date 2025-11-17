@@ -37,7 +37,7 @@ public class ResultRow {
     @Nullable
     public <T> T getOrNull(@Nonnull Column<T> column) {
         if (!column.isNullable) {
-            throw new SQLRuntimeException("the value of column %s won't be null".formatted(Quote.quoteColumnName(column.name)));
+            throw new SQLRuntimeException("the value of column %s won't be null".formatted(Quote.quoteColumnStandalone(column)));
         }
 
         @Nullable T result = null;

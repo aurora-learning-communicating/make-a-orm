@@ -24,9 +24,9 @@ public class NullOrNot<T, E extends Column<T>> extends WherePredicate<T, E> {
     @Override
     public String toSQL() {
         if (isNull) {
-            return "%s is null".formatted(Quote.quoteColumnName(column.name));
+            return "%s is null".formatted(Quote.quoteColumnStandalone(column));
         } else {
-            return "%s is not null".formatted(Quote.quoteColumnName(column.name));
+            return "%s is not null".formatted(Quote.quoteColumnStandalone(column));
         }
     }
 }

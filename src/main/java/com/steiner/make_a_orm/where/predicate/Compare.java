@@ -34,9 +34,9 @@ public class Compare<T extends Comparable<T>, E extends Column<T>> extends Where
         String format = "%s %s %s";
 
         if (isInCheck) {
-            return format.formatted(Quote.quoteColumnName(column.name), comparator.sign, column.format(literal));
+            return format.formatted(Quote.quoteColumnStandalone(column), comparator.sign, column.format(literal));
         } else {
-            return format.formatted(Quote.quoteColumnName(column.name), comparator.sign, Quote.slot);
+            return format.formatted(Quote.quoteColumnStandalone(column), comparator.sign, Quote.slot);
         }
     }
 }
