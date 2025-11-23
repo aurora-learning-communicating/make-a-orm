@@ -8,7 +8,7 @@ import jakarta.annotation.Nonnull;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class Compare<T extends Comparable<T>, E extends Column<T>> extends WherePredicate<T, E> {
+public class Compare<T extends Comparable<? super T>, E extends Column<T>> extends WherePredicate<T, E> {
     @Nonnull
     public Comparator comparator;
     @Nonnull

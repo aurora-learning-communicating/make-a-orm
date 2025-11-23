@@ -8,6 +8,7 @@ import com.steiner.make_a_orm.column.string.CharacterVaryingColumn;
 import com.steiner.make_a_orm.database.Database;
 import com.steiner.make_a_orm.key.ForeignKey;
 import com.steiner.make_a_orm.key.PrimaryKey;
+import com.steiner.make_a_orm.statement.select.ResultRow;
 import com.steiner.make_a_orm.table.IntIdTable;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.transaction.Transaction;
@@ -32,8 +33,8 @@ public class TestORM {
     Database database = Database.builder((builder) -> {
         builder.driver = new org.postgresql.Driver();
         builder.url = "jdbc:postgresql://192.168.1.10/orm-test";
-        builder.username = "steiner";
-        builder.password = "779151714";
+        // builder.username = "steiner";
+        // builder.password = "779151714";
     });
 
     NumberCollectionTable table = new NumberCollectionTable();
@@ -155,13 +156,8 @@ public class TestORM {
     public void testCheck() {
         var table = new IntIdTable("items") {
             IntegerColumn value1 = integer("value1");
-            IntegerColumn value2 = integer("value2").check("ck_1", (column) -> {
-                return column.greater(1);
-            });
-
-            CharacterVaryingColumn value3 = characterVarying("value3", 20).check("ck_2", (column) -> {
-                return column.like("%hello%");
-            });
+            IntegerColumn value2 = integer("value2").check("ck_1", (column) -> column.greater(1));
+            CharacterVaryingColumn value3 = characterVarying("value3", 20).check("ck_2", (column) -> column.like("%hello%"));
         };
 
         System.out.println(table.toSQL());
@@ -212,6 +208,27 @@ public class TestORM {
                 System.out.println("%s %s %s %s".formatted(column1, column2, column3, column4));
             });
 
+        });
+    }
+
+    @Test
+    public void testInsertReturning() {
+        Transaction.transaction(database, () -> {
+            ResultRow resultRow = table.insertReturning((statement) -> {
+                statement.set(table.column1, 2);
+                statement.set(table.column2, 2.1);
+                statement.set(table.column3, (short) 2);
+                statement.set(table.column4, (byte) 2);
+            }, table.column1, table.column2);
+
+            // TODO: query with known column
+            int column1 = resultRow.get(table.column1);
+            double column2 = resultRow.get(table.column2);
+
+            System.out.println("column1: %s, column2: %s".formatted(column1, column2));
+            // TODO: query with unknown column
+
+            short column3 = resultRow.get(table.column3);
         });
     }
 }

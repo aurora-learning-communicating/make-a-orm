@@ -46,7 +46,9 @@ public class Errors {
         return new SQLRuntimeException("unexpected value of type Integer %s to %s".formatted(value, value.getClass().getTypeName()));
     }
 
-
+    public static SQLRuntimeException ReadError(@Nonnull SQLException cause) {
+        return new SQLRuntimeException("read error").cause(cause);
+    }
 
     public static SQLRuntimeException InsertError(@Nonnull SQLException cause) {
         return new SQLRuntimeException("insert error").cause(cause);

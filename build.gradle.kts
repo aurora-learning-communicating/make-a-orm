@@ -26,10 +26,15 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:0.61.0")
     // https://mvnrepository.com/artifact/org.jetbrains.exposed/exposed-jdbc
     runtimeOnly("org.jetbrains.exposed:exposed-jdbc:0.61.0")
+    // https://mvnrepository.com/artifact/org.jetbrains.exposed/exposed-kotlin-datetime
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:0.61.0")
     // https://mvnrepository.com/artifact/com.h2database/h2
     testImplementation("com.h2database:h2:2.4.240")
     // https://mvnrepository.com/artifact/org.postgresql/postgresql
     testImplementation("org.postgresql:postgresql:42.7.8")
+
+    // https://mvnrepository.com/artifact/org.yaml/snakeyaml
+    testImplementation("org.yaml:snakeyaml:2.5")
 }
 
 tasks.test {

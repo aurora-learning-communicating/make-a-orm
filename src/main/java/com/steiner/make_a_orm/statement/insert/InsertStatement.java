@@ -3,6 +3,7 @@ package com.steiner.make_a_orm.statement.insert;
 import com.steiner.make_a_orm.Errors;
 import com.steiner.make_a_orm.IToSQL;
 import com.steiner.make_a_orm.column.Column;
+import com.steiner.make_a_orm.exception.SQLRuntimeException;
 import com.steiner.make_a_orm.statement.select.ResultRow;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.transaction.Transaction;
@@ -136,6 +137,8 @@ public class InsertStatement implements IToSQL {
 
             this.preparedStatement.execute();
             ResultSet resultSet = this.preparedStatement.getResultSet();
+            resultSet.next();
+
             return new ResultRow(resultSet);
         } catch (SQLException e) {
           throw Errors.CreateStatementFailed.cause(e);

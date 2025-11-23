@@ -24,7 +24,7 @@ public class ResultRow {
         try {
             result = column.read(resultSet);
         } catch (SQLException exception) {
-            throw new SQLRuntimeException("error when read").cause(exception);
+            throw Errors.ReadError(exception);
         }
 
         if (result == null) {

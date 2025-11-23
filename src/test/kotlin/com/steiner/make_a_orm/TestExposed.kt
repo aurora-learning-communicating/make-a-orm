@@ -16,8 +16,9 @@ class TestExposed {
         val column4 = byte("byte").default(2)
     }
 
-    val ipAddress = "192.168.1.10"
-    val database = Database.connect(url = "jdbc:postgresql://$ipAddress/orm-test", user = "steiner", password = "779151714")
+    val input = this.javaClass.getResourceAsStream("environment.yaml") ?: error("no such file environment.yaml")
+    val environment: Environment = Environment.loadFrom(input)
+    val database = Database.connect(url = environment.url!!, user = environment.username!! , password = environment.password!!)
 
     @Test
     fun createTable() {

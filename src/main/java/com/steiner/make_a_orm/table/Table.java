@@ -2,6 +2,9 @@ package com.steiner.make_a_orm.table;
 
 import com.steiner.make_a_orm.IToSQL;
 import com.steiner.make_a_orm.column.Column;
+import com.steiner.make_a_orm.column.date.DateColumn;
+import com.steiner.make_a_orm.column.date.TimeColumn;
+import com.steiner.make_a_orm.column.date.TimestampColumn;
 import com.steiner.make_a_orm.column.numeric.*;
 import com.steiner.make_a_orm.column.string.CharacterColumn;
 import com.steiner.make_a_orm.column.string.CharacterVaryingColumn;
@@ -91,7 +94,21 @@ public abstract class Table implements IToSQL {
         return registerColumn(new TextColumn(name, this));
     }
 
-    // TODO: reference
+    protected DateColumn date(@Nonnull String name) {
+        return registerColumn(new DateColumn(name, this));
+    }
+
+    protected TimeColumn time(@Nonnull String name) {
+        return registerColumn(new TimeColumn(name, this));
+    }
+
+    protected TimestampColumn timestamp(@Nonnull String name) {
+        return registerColumn(new TimestampColumn(name, this));
+    }
+
+
+
+
     protected <T extends Column<?>> ForeignKey<T> reference(@Nonnull String name, @Nonnull T fromColumn) {
         if (!fromColumn.isUnique && !fromColumn.isPrimaryKey) {
             throw Errors.ForeignKeyError;

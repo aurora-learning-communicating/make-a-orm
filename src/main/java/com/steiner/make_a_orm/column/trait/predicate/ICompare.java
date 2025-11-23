@@ -6,7 +6,7 @@ import com.steiner.make_a_orm.where.predicate.WherePredicate;
 import com.steiner.make_a_orm.where.operator.Comparator;
 import jakarta.annotation.Nonnull;
 
-public interface ICompare<T extends Comparable<T>, E extends Column<T>> {
+public interface ICompare<T extends Comparable<? super T>, E extends Column<T>> {
     @Nonnull
     E self();
 
