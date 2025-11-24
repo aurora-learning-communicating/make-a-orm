@@ -24,7 +24,8 @@ public class Errors {
 
     public static SQLBuildException PrimaryNotNull = new SQLBuildException("consider that value of primary key cannot be null, so I forbid this case, cannot set the primary key with null");
     public static SQLBuildException CompositeKeyDifferent = new SQLBuildException("in composite key, all the column must from the same table");
-
+    public static SQLBuildException SetNull = new SQLBuildException("cannot set the non-null column with null");
+    public static SQLBuildException DivByZero = new SQLBuildException("div by zero");
     public static SQLBuildException TableNotTheSame = new SQLBuildException("columns not from the same table");
     public static SQLBuildException NoDefaultValueSet(@Nonnull Column<?> column) {
         return new SQLBuildException("there is no default value set in the %s".formatted(column.name));
@@ -56,4 +57,5 @@ public class Errors {
 
     public static SQLRuntimeException CreateStatementFailed = new SQLRuntimeException("create statement failed");
     public static SQLRuntimeException ExecuteInsertFailed = new SQLRuntimeException("insert failed");
+    public static SQLRuntimeException ExecuteUpdateFailed = new SQLRuntimeException("update failed");
 }

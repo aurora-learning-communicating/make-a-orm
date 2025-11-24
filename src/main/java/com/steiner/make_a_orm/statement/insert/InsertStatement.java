@@ -3,7 +3,6 @@ package com.steiner.make_a_orm.statement.insert;
 import com.steiner.make_a_orm.Errors;
 import com.steiner.make_a_orm.IToSQL;
 import com.steiner.make_a_orm.column.Column;
-import com.steiner.make_a_orm.exception.SQLRuntimeException;
 import com.steiner.make_a_orm.statement.select.ResultRow;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.transaction.Transaction;
@@ -27,9 +26,9 @@ public class InsertStatement implements IToSQL {
     @Nonnull
     public PreparedStatement preparedStatement;
     @Nonnull
-    public boolean[] bits;
+    public boolean[] insertedBits; // insert 没有指定字段时，查看这个字段有没有被设置
     @Nonnull
-    public Map<Column<?>, Integer> indexMap;
+    public Map<Column<?>, Integer> indexMap; // 与 isnertedBits 相互配合
     @Nonnull
     public Connection connection;
 
@@ -44,8 +43,8 @@ public class InsertStatement implements IToSQL {
                 .toList();
 
         this.connection = Transaction.currentConnection();
-        this.bits = new boolean[sliceColumns.size()];
-        Arrays.fill(this.bits, false);
+        this.insertedBits = new boolean[sliceColumns.size()];
+        Arrays.fill(this.insertedBits, false);
 
         this.indexMap = new HashMap<>();
         for (int offset = 0; offset < sliceColumns.size(); offset += 1) {
@@ -69,7 +68,7 @@ public class InsertStatement implements IToSQL {
             throw Errors.SetOnPrimary;
         }
 
-        this.bits[index - 1] = true;
+        this.insertedBits[index - 1] = true;
 
         try {
             Objects.requireNonNull(this.preparedStatement);
@@ -89,7 +88,7 @@ public class InsertStatement implements IToSQL {
             Objects.requireNonNull(this.preparedStatement);
 
             StreamExtension.forEachIndexedThrows(this.sliceColumns, (column, index) -> {
-                boolean bit = bits[index];
+                boolean bit = insertedBits[index];
 
                 if (!bit) {
                     if (column.hasDefault()) {
@@ -124,7 +123,7 @@ public class InsertStatement implements IToSQL {
             Objects.requireNonNull(this.preparedStatement);
 
             StreamExtension.forEachIndexedThrows(this.sliceColumns, (column, index) -> {
-                boolean bit = bits[index];
+                boolean bit = insertedBits[index];
 
                 if (!bit) {
                     if (column.hasDefault()) {
