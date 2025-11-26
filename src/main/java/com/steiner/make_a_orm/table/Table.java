@@ -15,6 +15,7 @@ import com.steiner.make_a_orm.key.PrimaryKey;
 import com.steiner.make_a_orm.statement.insert.InsertStatement;
 import com.steiner.make_a_orm.statement.select.ResultRow;
 import com.steiner.make_a_orm.statement.select.SelectStatement;
+import com.steiner.make_a_orm.statement.update.UpdateStatement;
 import com.steiner.make_a_orm.util.Quote;
 import com.steiner.make_a_orm.Errors;
 import com.steiner.make_a_orm.util.StreamExtension;
@@ -155,6 +156,12 @@ public abstract class Table implements IToSQL {
         InsertStatement insertStatement = new InsertStatement(this, columns);
         consumer.accept(insertStatement);
         return insertStatement.executeInsertReturning();
+    }
+
+    public void update(@Nonnull Consumer<UpdateStatement> consumer) {
+        UpdateStatement updateStatement = new UpdateStatement(this);
+        consumer.accept(updateStatement);
+        updateStatement.executeUpdate();
     }
 
     public void check(@Nonnull String name, @Nonnull WhereStatement whereStatement) {

@@ -16,9 +16,9 @@ class TestExposed {
         val column4 = byte("byte").default(2)
     }
 
-    val input = this.javaClass.getResourceAsStream("environment.yaml") ?: error("no such file environment.yaml")
+    val input = this.javaClass.classLoader.getResourceAsStream("environment.yaml") ?: error("no such file environment.yaml")
     val environment: Environment = Environment.loadFrom(input)
-    val database = Database.connect(url = environment.url!!, user = environment.username!! , password = environment.password!!)
+    val database = Database.connect(url = environment.url, user = environment.username!! , password = environment.password!!)
 
     @Test
     fun createTable() {

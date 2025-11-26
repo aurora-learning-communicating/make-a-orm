@@ -193,8 +193,12 @@ public class UpdateStatement implements IToSQL {
     }
 
     private <T> void checkSet(@Nonnull Column<T> column, @Nullable T value) {
-        if (!table.columns.contains(column)) {
+        if (!column.fromTable.equals(table)) {
             throw Errors.ColumnNotExists(column, table);
+        }
+
+        if (column.isPrimaryKey || column.isAutoIncrement) {
+            throw Errors.SetOnPrimary;
         }
 
         if (!column.isNullable && value == null) {
@@ -203,8 +207,12 @@ public class UpdateStatement implements IToSQL {
     }
 
     private <T> void checkModify(@Nonnull Column<T> column) {
-        if (!table.columns.contains(column)) {
+        if (!column.fromTable.equals(table)) {
             throw Errors.ColumnNotExists(column, table);
+        }
+
+        if (column.isPrimaryKey || column.isAutoIncrement) {
+            throw Errors.SetOnPrimary;
         }
     }
 

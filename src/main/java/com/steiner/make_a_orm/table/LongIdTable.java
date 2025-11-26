@@ -5,7 +5,7 @@ import com.steiner.make_a_orm.key.PrimaryKey;
 import jakarta.annotation.Nonnull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class LongIdTable extends IdTable {
+public abstract class LongIdTable extends IdTable<Long, BigIntColumn> {
     public LongIdTable(@Nonnull String name, @Nonnull String idName) {
         super(name, idName);
     }

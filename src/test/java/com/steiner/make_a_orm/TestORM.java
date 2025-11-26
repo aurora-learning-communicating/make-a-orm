@@ -1,5 +1,8 @@
 package com.steiner.make_a_orm;
 
+import com.steiner.make_a_orm.column.date.DateColumn;
+import com.steiner.make_a_orm.column.date.TimeColumn;
+import com.steiner.make_a_orm.column.date.TimestampColumn;
 import com.steiner.make_a_orm.column.numeric.DoubleColumn;
 import com.steiner.make_a_orm.column.numeric.IntegerColumn;
 import com.steiner.make_a_orm.column.numeric.SmallIntColumn;
@@ -16,6 +19,11 @@ import com.steiner.make_a_orm.where.statement.WhereStatement;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Objects;
 import java.util.Random;
 
 public class TestORM {
@@ -30,45 +38,48 @@ public class TestORM {
         }
     }
 
+    InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("environment.yaml");
+    Environment environment = Environment.loadFrom(Objects.requireNonNull(inputStream));
+
     Database database = Database.builder((builder) -> {
         builder.driver = new org.postgresql.Driver();
-        builder.url = "jdbc:postgresql://192.168.1.10/orm-test";
-        // builder.username = "steiner";
-        // builder.password = "779151714";
+        builder.url = environment.url;
+        builder.username = environment.username;
+        builder.password = environment.password;
     });
 
-    NumberCollectionTable table = new NumberCollectionTable();
+    NumberCollectionTable numbers = new NumberCollectionTable();
 
     @Test
     public void testQuery() {
         Transaction.transaction(database, () -> {
             // common search
-            table.selectAll().stream().forEach(resultRow -> {
-                Integer column1 = resultRow.get(table.column1);
-                Double column2 = resultRow.get(table.column2);
-                Short column3 = resultRow.get(table.column3);
-                Byte column4 = resultRow.get(table.column4);
+            numbers.selectAll().stream().forEach(resultRow -> {
+                Integer column1 = resultRow.get(numbers.column1);
+                Double column2 = resultRow.get(numbers.column2);
+                Short column3 = resultRow.get(numbers.column3);
+                Byte column4 = resultRow.get(numbers.column4);
 
                 System.out.println("%s %s %s %s".formatted(column1, column2, column3, column4));
             });
 
             // search with where
-            table.selectAll().where(table.column1.less(8)).stream().forEach(resultRow -> {
-                Integer column1 = resultRow.get(table.column1);
-                Double column2 = resultRow.get(table.column2);
-                Short column3 = resultRow.get(table.column3);
-                Byte column4 = resultRow.get(table.column4);
+            numbers.selectAll().where(numbers.column1.less(8)).stream().forEach(resultRow -> {
+                Integer column1 = resultRow.get(numbers.column1);
+                Double column2 = resultRow.get(numbers.column2);
+                Short column3 = resultRow.get(numbers.column3);
+                Byte column4 = resultRow.get(numbers.column4);
 
                 System.out.println("%s %s %s %s".formatted(column1, column2, column3, column4));
             });
 
             // search with where combination
-            WhereStatement whereStatement = table.column1.greater(5).and(table.column2.less(10.0));
-            table.selectAll().where(whereStatement).stream().forEach(resultRow -> {
-                Integer column1 = resultRow.get(table.column1);
-                Double column2 = resultRow.get(table.column2);
-                Short column3 = resultRow.get(table.column3);
-                Byte column4 = resultRow.get(table.column4);
+            WhereStatement whereStatement = numbers.column1.greater(5).and(numbers.column2.less(10.0));
+            numbers.selectAll().where(whereStatement).stream().forEach(resultRow -> {
+                Integer column1 = resultRow.get(numbers.column1);
+                Double column2 = resultRow.get(numbers.column2);
+                Short column3 = resultRow.get(numbers.column3);
+                Byte column4 = resultRow.get(numbers.column4);
 
                 System.out.println("%s %s %s %s".formatted(column1, column2, column3, column4));
             });
@@ -173,19 +184,19 @@ public class TestORM {
             Random random = new Random();
             for (int count = 1; count <= 10; count += 1) {
                 int countCopy = count;
-                table.insert(statement -> {
-                    statement.set(table.column1, countCopy);
-                    statement.set(table.column2, random.nextDouble());
-                    statement.set(table.column3, (short) countCopy);
-                    statement.set(table.column4, (byte) countCopy);
+                numbers.insert(statement -> {
+                    statement.set(numbers.column1, countCopy);
+                    statement.set(numbers.column2, random.nextDouble());
+                    statement.set(numbers.column3, (short) countCopy);
+                    statement.set(numbers.column4, (byte) countCopy);
                 });
             }
 
-            table.selectAll().stream().forEach(resultRow -> {
-                Integer column1 = resultRow.get(table.column1);
-                Double column2 = resultRow.get(table.column2);
-                Short column3 = resultRow.get(table.column3);
-                Byte column4 = resultRow.get(table.column4);
+            numbers.selectAll().stream().forEach(resultRow -> {
+                Integer column1 = resultRow.get(numbers.column1);
+                Double column2 = resultRow.get(numbers.column2);
+                Short column3 = resultRow.get(numbers.column3);
+                Byte column4 = resultRow.get(numbers.column4);
 
                 System.out.println("%s %s %s %s".formatted(column1, column2, column3, column4));
             });
@@ -196,14 +207,14 @@ public class TestORM {
     public void testInsertWithDefault() {
         Transaction.transaction(database, () -> {
             for (int count = 1; count <= 10; count += 1) {
-                table.insert(statement -> {});
+                numbers.insert(statement -> {});
             }
 
-            table.selectAll().stream().forEach(resultRow -> {
-                Integer column1 = resultRow.get(table.column1);
-                Double column2 = resultRow.get(table.column2);
-                Short column3 = resultRow.get(table.column3);
-                Byte column4 = resultRow.get(table.column4);
+            numbers.selectAll().stream().forEach(resultRow -> {
+                Integer column1 = resultRow.get(numbers.column1);
+                Double column2 = resultRow.get(numbers.column2);
+                Short column3 = resultRow.get(numbers.column3);
+                Byte column4 = resultRow.get(numbers.column4);
 
                 System.out.println("%s %s %s %s".formatted(column1, column2, column3, column4));
             });
@@ -214,21 +225,69 @@ public class TestORM {
     @Test
     public void testInsertReturning() {
         Transaction.transaction(database, () -> {
-            ResultRow resultRow = table.insertReturning((statement) -> {
-                statement.set(table.column1, 2);
-                statement.set(table.column2, 2.1);
-                statement.set(table.column3, (short) 2);
-                statement.set(table.column4, (byte) 2);
-            }, table.column1, table.column2);
+            ResultRow resultRow = numbers.insertReturning((statement) -> {
+                statement.set(numbers.column1, 2);
+                statement.set(numbers.column2, 2.1);
+                statement.set(numbers.column3, (short) 2);
+                statement.set(numbers.column4, (byte) 2);
+            }, numbers.column1, numbers.column2);
 
             // TODO: query with known column
-            int column1 = resultRow.get(table.column1);
-            double column2 = resultRow.get(table.column2);
+            int column1 = resultRow.get(numbers.column1);
+            double column2 = resultRow.get(numbers.column2);
 
             System.out.println("column1: %s, column2: %s".formatted(column1, column2));
             // TODO: query with unknown column
 
-            short column3 = resultRow.get(table.column3);
+            // short column3 = resultRow.get(table.column3);
+        });
+    }
+
+    static class Times extends IntIdTable {
+        DateColumn date = date("date");
+        TimestampColumn dateTime = timestamp("datetime");
+        TimestampColumn timestamp = timestamp("timestamp");
+        TimeColumn time = time("time");
+
+        public Times() {
+            super("times");
+        }
+    }
+
+    @Test
+    public void testTimes() {
+        Times table = new Times();
+
+        Transaction.transaction(database, () -> {
+            LocalDateTime localDateTime = LocalDateTime.of(2020, 10, 10, 10, 10, 10);
+            table.insert(statement -> {
+                statement.set(table.date, LocalDate.of(2010, 10, 10));
+                statement.set(table.dateTime, localDateTime);
+                statement.set(table.timestamp, localDateTime);
+                statement.set(table.time, LocalTime.of(20, 0, 0));
+            });
+
+            table.selectAll().stream().forEach(resultRow -> {
+                LocalDate date = resultRow.get(table.date);
+                LocalDateTime dateTime = resultRow.get(table.dateTime);
+                LocalDateTime timestamp = resultRow.get(table.timestamp);
+                LocalTime time = resultRow.get(table.time);
+
+                System.out.println("date: %s, dateTime: %s, timestamp: %s, time: %s".formatted(date, dateTime, timestamp, time));
+            });
+        });
+    }
+
+    @Test
+    public void testUpdate() {
+        Transaction.transaction(database, () -> {
+            numbers.update((statement) -> {
+                statement.set(numbers.column2, 10.0);
+                statement.set(numbers.column3, (short) 10);
+                statement.set(numbers.column4, (byte) 10);
+
+                statement.where(numbers.id().equal(1));
+            });
         });
     }
 }
