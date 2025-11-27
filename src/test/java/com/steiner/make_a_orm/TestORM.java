@@ -15,6 +15,7 @@ import com.steiner.make_a_orm.statement.select.ResultRow;
 import com.steiner.make_a_orm.table.IntIdTable;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.transaction.Transaction;
+import com.steiner.make_a_orm.unit.TimeUnit;
 import com.steiner.make_a_orm.where.statement.WhereStatement;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
@@ -281,12 +282,34 @@ public class TestORM {
     @Test
     public void testUpdate() {
         Transaction.transaction(database, () -> {
-            numbers.update((statement) -> {
-                statement.set(numbers.column2, 10.0);
-                statement.set(numbers.column3, (short) 10);
-                statement.set(numbers.column4, (byte) 10);
+//            numbers.update((statement) -> {
+//                statement.set(numbers.column2, 10.0);
+//                statement.set(numbers.column3, (short) 10);
+//                statement.set(numbers.column4, (byte) 10);
+//
+//                statement.where(numbers.id().equal(1));
+//            });
+
+            numbers.update(statement -> {
+                statement.plus(numbers.column1, 1);
 
                 statement.where(numbers.id().equal(1));
+            });
+        });
+    }
+
+    @Test
+    public void testUpdateTimes() {
+        Times times = new Times();
+
+        Transaction.transaction(database, () -> {
+            times.update(statement -> {
+                statement.plus(times.date, 1, TimeUnit.Date.Day);
+                statement.plus(times.dateTime, 2, TimeUnit.DateTime.Month);
+                statement.plus(times.timestamp, 3, TimeUnit.DateTime.Minute);
+                statement.plus(times.time, 4, TimeUnit.Time.Hour);
+
+                statement.where(times.id().equal(1));
             });
         });
     }

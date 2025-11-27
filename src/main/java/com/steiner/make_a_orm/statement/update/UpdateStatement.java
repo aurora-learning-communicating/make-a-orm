@@ -72,7 +72,8 @@ public class UpdateStatement implements IToSQL {
     void plus(@Nonnull E column, @Nonnull T value) {
         checkModify(column);
 
-        String expression = "%s + %s".formatted(Quote.quoteColumn(column), column.format(value));
+        String columnQuote = Quote.quoteColumn(column);
+        String expression = "%s = %s + %s".formatted(columnQuote, columnQuote, column.format(value));
         this.expressions.add(expression);
     }
 
@@ -80,7 +81,8 @@ public class UpdateStatement implements IToSQL {
     void minus(@Nonnull E column, @Nonnull T value) {
         checkModify(column);
 
-        String expression = "%s - %s".formatted(Quote.quoteColumn(column), column.format(value));
+        String columnQuote = Quote.quoteColumn(column);
+        String expression = "%s = %s - %s".formatted(columnQuote, columnQuote, column.format(value));
         this.expressions.add(expression);
     }
 
@@ -88,7 +90,8 @@ public class UpdateStatement implements IToSQL {
     void times(@Nonnull E column, @Nonnull T value) {
         checkModify(column);
 
-        String expression = "%s * %s".formatted(Quote.quoteColumn(column), column.format(value));
+        String columnQuote = Quote.quoteColumn(column);
+        String expression = "%s = %s * %s".formatted(columnQuote, columnQuote, column.format(value));
         this.expressions.add(expression);
     }
 
@@ -100,50 +103,65 @@ public class UpdateStatement implements IToSQL {
             throw Errors.DivByZero;
         }
 
-        String expression = "%s / %s".formatted(Quote.quoteColumn(column), column.format(value));
+        String columnQuote = Quote.quoteColumn(column);
+        String expression = "%s = %s / %s".formatted(columnQuote, columnQuote, column.format(value));
         this.expressions.add(expression);
     }
 
 
     public void plus(@Nonnull DateColumn column, int amount, @Nonnull TimeUnit.Date unit) {
         checkModify(column);
-        String expression = "%s + interval %s %s".formatted(Quote.quoteColumn(column), amount, unit.unit);
+
+        String columnQuote = Quote.quoteColumn(column);
+        String expression = "%s = %s + interval %s".formatted(columnQuote, columnQuote, Quote.quoteInterval(amount, unit));
         this.expressions.add(withModifyNull(column, expression));
     }
 
     public void plus(@Nonnull TimeColumn column, int amount, @Nonnull TimeUnit.Time unit) {
         checkModify(column);
-        String expression = "%s + interval %s %s".formatted(Quote.quoteColumn(column), amount, unit.unit);
+
+        String columnQuote = Quote.quoteColumn(column);
+        String expression = "%s = %s + interval %s".formatted(columnQuote, columnQuote, Quote.quoteInterval(amount, unit));
         this.expressions.add(withModifyNull(column, expression));
     }
 
     public void plus(@Nonnull TimestampColumn column, int amount, @Nonnull TimeUnit.DateTime unit) {
         checkModify(column);
-        String expression = "%s + interval %s %s".formatted(Quote.quoteColumn(column), amount, unit.unit);
+
+        String columnQuote = Quote.quoteColumn(column);
+        String expression = "%s = %s + interval %s".formatted(columnQuote, columnQuote, Quote.quoteInterval(amount, unit));
         this.expressions.add(withModifyNull(column, expression));
     }
 
     public void minus(@Nonnull DateColumn column, int amount, @Nonnull TimeUnit.Date unit) {
         checkModify(column);
-        String expression = "%s + interval %s %s".formatted(Quote.quoteColumn(column), amount, unit.unit);
+
+        String columnQuote = Quote.quoteColumn(column);
+        String expression = "%s = %s - interval %s".formatted(columnQuote, columnQuote, Quote.quoteInterval(amount, unit));
         this.expressions.add(withModifyNull(column, expression));
     }
 
     public void minus(@Nonnull TimeColumn column, int amount, @Nonnull TimeUnit.Time unit) {
         checkModify(column);
-        String expression = "%s + interval %s %s".formatted(Quote.quoteColumn(column), amount, unit.unit);
+
+        String columnQuote = Quote.quoteColumn(column);
+        String expression = "%s = %s - interval %s".formatted(columnQuote, columnQuote, Quote.quoteInterval(amount, unit));
         this.expressions.add(withModifyNull(column, expression));
     }
 
     public void minus(@Nonnull TimestampColumn column, int amount, @Nonnull TimeUnit.DateTime unit) {
         checkModify(column);
-        String expression = "%s + interval %s %s".formatted(Quote.quoteColumn(column), amount, unit.unit);
+
+        String columnQuote = Quote.quoteColumn(column);
+        String expression = "%s = %s - interval %s".formatted(columnQuote, columnQuote, Quote.quoteInterval(amount, unit));
         this.expressions.add(withModifyNull(column, expression));
     }
 
     public void plus(@Nonnull StringColumn column, @Nonnull String value) {
         checkModify(column);
-        String expression = "concat(%s, %s)".formatted(Quote.quoteColumn(column), column.format(value));
+
+        String columnQuote = Quote.quoteColumn(column);
+        String expression = "%s = concat(%s, %s)".formatted(columnQuote, columnQuote, column.format(value));
         this.expressions.add(withModifyNull(column, expression));
     }
 

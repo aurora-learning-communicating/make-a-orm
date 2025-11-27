@@ -5,7 +5,6 @@ import jakarta.annotation.Nonnull;
 public class TimeUnit {
     public enum Date {
         Year("year"),
-        Quarter("quarter"),
         Month("month"),
         Week("week"),
         Day("day");
@@ -18,7 +17,6 @@ public class TimeUnit {
 
     public enum DateTime {
         Year("year"),
-        Quarter("quarter"),
         Month("month"),
         Week("week"),
         Day("day"),

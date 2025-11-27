@@ -2,6 +2,7 @@ package com.steiner.make_a_orm.util;
 
 import com.steiner.make_a_orm.column.Column;
 import com.steiner.make_a_orm.table.Table;
+import com.steiner.make_a_orm.unit.TimeUnit;
 import jakarta.annotation.Nonnull;
 
 public class Quote {
@@ -31,5 +32,20 @@ public class Quote {
     @Nonnull
     public static String quoteString(@Nonnull String string) {
         return literalFormatter.formatted(string);
+    }
+
+    @Nonnull
+    public static String quoteInterval(int amount, @Nonnull TimeUnit.Date date) {
+        return quoteString("%s %s".formatted(amount, date.unit));
+    }
+
+    @Nonnull
+    public static String quoteInterval(int amount, @Nonnull TimeUnit.DateTime dateTime) {
+        return quoteString("%s %s".formatted(amount, dateTime.unit));
+    }
+
+    @Nonnull
+    public static String quoteInterval(int amount, @Nonnull TimeUnit.Time time) {
+        return quoteString("%s %s".formatted(amount, time.unit));
     }
 }
