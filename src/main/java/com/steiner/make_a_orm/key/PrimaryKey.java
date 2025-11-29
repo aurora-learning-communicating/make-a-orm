@@ -69,7 +69,7 @@ public abstract class PrimaryKey extends Key {
         @Nonnull
         @Override
         public String toSQL() {
-            String names = columns.stream().map(column -> column.name).collect(Collectors.joining(","));
+            String names = columns.stream().map(Quote::quoteColumn).collect(Collectors.joining(","));
             return "primary key (%s)".formatted(names);
         }
     }

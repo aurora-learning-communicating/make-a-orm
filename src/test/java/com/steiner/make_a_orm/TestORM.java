@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
@@ -310,6 +311,43 @@ public class TestORM {
                 statement.plus(times.time, 4, TimeUnit.Time.Hour);
 
                 statement.where(times.id().equal(1));
+            });
+        });
+    }
+
+    @Test
+    public void testDeleteNumbers() {
+        Transaction.transaction(database, () -> {
+            numbers.delete(statement -> {
+                statement.where(numbers.id().inList(List.of(18, 19, 20)));
+            });
+
+            numbers.selectAll().stream().forEach(resultRow -> {
+                Integer column1 = resultRow.get(numbers.column1);
+                Double column2 = resultRow.get(numbers.column2);
+                Short column3 = resultRow.get(numbers.column3);
+                Byte column4 = resultRow.get(numbers.column4);
+
+                System.out.println("%s %s %s %s".formatted(column1, column2, column3, column4));
+            });
+        });
+    }
+
+    @Test
+    public void testSelectLimt() {
+        Transaction.transaction(database, () -> {
+            numbers.selectAll()
+                    .offset(12)
+                    .limit(10)
+                    .orderBy(numbers.id())
+                    .stream().forEach(resultRow -> {
+                Integer id = resultRow.get(numbers.id());
+                Integer column1 = resultRow.get(numbers.column1);
+                Double column2 = resultRow.get(numbers.column2);
+                Short column3 = resultRow.get(numbers.column3);
+                Byte column4 = resultRow.get(numbers.column4);
+
+                System.out.println("%s %s %s %s %s".formatted(id, column1, column2, column3, column4));
             });
         });
     }

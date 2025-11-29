@@ -36,8 +36,12 @@ public abstract class Table implements IToSQL {
     @Nonnull
     public String name;
 
+
+    // 不要修改 primaryKey 的获取 顺序，不然就会 因为 初始顺序不对，导致 `idName` 为空
+    // 最烦的就是这玩意了，不要再构造函数中调用这些 abstract 方法
     @Nullable
     private PrimaryKey primaryKey;
+    private boolean primaryKeyAlreadySet;
 
     @Nonnull
     public List<ForeignKey<?>> foreignKeys;
@@ -53,6 +57,7 @@ public abstract class Table implements IToSQL {
         this.foreignKeys = new ArrayList<>();
         this.columns = new ArrayList<>();
         this.checks = new ArrayList<>();
+        this.primaryKeyAlreadySet = false;
     }
 
     @Nullable
@@ -138,12 +143,24 @@ public abstract class Table implements IToSQL {
         columns.add(column);
         columns.addAll(List.of(otherColumns));
 
-        return new SelectStatement(this, columns.toArray(Column<?>[]::new));
+        return new SelectStatement(this, columns);
     }
 
     @Nonnull
     public SelectStatement selectAll() {
-        return new SelectStatement(this, columns.toArray(Column<?>[]::new));
+        List<Column<?>> slices = new ArrayList<>();
+
+        if (!this.primaryKeyAlreadySet) {
+            this.primaryKey = primaryKey();
+            this.primaryKeyAlreadySet = true;
+        }
+
+        if (this.primaryKey != null && this.primaryKey instanceof PrimaryKey.Single<?> key) {
+            slices.add(key.fromColumn);
+        }
+
+        slices.addAll(columns);
+        return new SelectStatement(this, slices);
     }
 
     public void insert(@Nonnull Consumer<InsertStatement> consumer) {
@@ -180,7 +197,11 @@ public abstract class Table implements IToSQL {
     @Override
     @Nonnull
     public String toSQL() {
-        this.primaryKey = primaryKey();
+        if (!this.primaryKeyAlreadySet) {
+            this.primaryKey = primaryKey();
+            this.primaryKeyAlreadySet = true;
+        }
+
         validateColumns();
 
         StringBuilder stringBuilder = new StringBuilder();

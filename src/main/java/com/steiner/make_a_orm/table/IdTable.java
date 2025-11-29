@@ -10,13 +10,13 @@ public abstract class IdTable<T, E extends Column<T>> extends Table {
     @Nonnull
     public String idName;
 
-    public IdTable(@Nonnull String name) {
-        this(name, "id");
-    }
-
     public IdTable(@Nonnull String name, @Nonnull String idName) {
         super(name);
         this.idName = idName;
+    }
+
+    public IdTable(@Nonnull String name) {
+        this(name, "id");
     }
 
     @Nonnull

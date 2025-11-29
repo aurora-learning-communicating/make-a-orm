@@ -52,9 +52,9 @@ public class SelectStatement implements Spliterator<ResultRow>, IToSQL {
     @Nonnull
     public Connection connection;
 
-    public SelectStatement(@Nonnull Table table, Column<?>... columns) {
+    public SelectStatement(@Nonnull Table table, @Nonnull List<Column<?>> sliceColumns) {
         this.table = table;
-        this.sliceColumns = Arrays.asList(columns);
+        this.sliceColumns = sliceColumns;
         this.orderBy = null;
         this.reversed = false;
         this.resultSet = null;
