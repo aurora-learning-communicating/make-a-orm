@@ -12,6 +12,7 @@ import com.steiner.make_a_orm.column.string.TextColumn;
 import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.key.ForeignKey;
 import com.steiner.make_a_orm.key.PrimaryKey;
+import com.steiner.make_a_orm.statement.delete.DeleteStatement;
 import com.steiner.make_a_orm.statement.insert.InsertStatement;
 import com.steiner.make_a_orm.statement.select.ResultRow;
 import com.steiner.make_a_orm.statement.select.SelectStatement;
@@ -163,6 +164,13 @@ public abstract class Table implements IToSQL {
         consumer.accept(updateStatement);
         updateStatement.executeUpdate();
     }
+
+    public void delete(@Nonnull Consumer<DeleteStatement> consumer) {
+        DeleteStatement deleteStatement = new DeleteStatement(this);
+        consumer.accept(deleteStatement);
+        deleteStatement.executeDelete();
+    }
+
 
     public void check(@Nonnull String name, @Nonnull WhereStatement whereStatement) {
         WhereTopStatement topStatement = new WhereTopStatement(whereStatement);

@@ -58,4 +58,5 @@ public class Errors {
     public static SQLRuntimeException CreateStatementFailed = new SQLRuntimeException("create statement failed");
     public static SQLRuntimeException ExecuteInsertFailed = new SQLRuntimeException("insert failed");
     public static SQLRuntimeException ExecuteUpdateFailed = new SQLRuntimeException("update failed");
+    public static SQLRuntimeException ExecuteDeleteFailed = new SQLRuntimeException("delete failed");
 }
