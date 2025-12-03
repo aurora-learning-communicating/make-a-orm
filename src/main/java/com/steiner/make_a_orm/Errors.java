@@ -42,7 +42,6 @@ public class Errors {
     public static SQLBuildException NoReturningColumn = new SQLBuildException("you don't specify columns to return yet");
 
     public static SQLRuntimeException GetNull = new SQLRuntimeException("the result is null, but using the nonnull constraint");
-
     public static SQLRuntimeException UnExpectedValueType(@Nonnull Object value) {
         return new SQLRuntimeException("unexpected value of type Integer %s to %s".formatted(value, value.getClass().getTypeName()));
     }

@@ -1,4 +1,4 @@
-package com.steiner.make_a_orm.table;
+package com.steiner.make_a_orm.table.impl;
 
 import com.steiner.make_a_orm.column.numeric.IntegerColumn;
 import com.steiner.make_a_orm.key.PrimaryKey;

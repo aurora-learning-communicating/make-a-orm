@@ -14,7 +14,7 @@ public class Quote {
 
     @Nonnull
     public static String quoteTable(@Nonnull Table table) {
-        return tableFormatter.formatted(table.name);
+        return tableFormatter.formatted(table.getName());
     }
 
     @Nonnull

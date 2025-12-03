@@ -36,16 +36,18 @@ public class ResultRow {
 
     @Nullable
     public <T> T getOrNull(@Nonnull Column<T> column) {
+        /*
         if (!column.isNullable) {
             throw new SQLRuntimeException("the value of column %s won't be null".formatted(Quote.quoteColumnStandalone(column)));
         }
+         */
 
         @Nullable T result = null;
         try {
-            column.read(resultSet);
+            result = column.read(resultSet);
             return result;
         } catch (SQLException exception) {
-            throw new SQLRuntimeException("error when read").cause(exception);
+            throw Errors.ReadError(exception);
         }
     }
 }

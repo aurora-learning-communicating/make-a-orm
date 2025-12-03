@@ -12,7 +12,7 @@ import com.steiner.make_a_orm.database.Database;
 import com.steiner.make_a_orm.key.ForeignKey;
 import com.steiner.make_a_orm.key.PrimaryKey;
 import com.steiner.make_a_orm.statement.select.ResultRow;
-import com.steiner.make_a_orm.table.IntIdTable;
+import com.steiner.make_a_orm.table.impl.IntIdTable;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.transaction.Transaction;
 import com.steiner.make_a_orm.unit.TimeUnit;

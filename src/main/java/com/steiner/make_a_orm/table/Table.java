@@ -14,6 +14,8 @@ import com.steiner.make_a_orm.key.ForeignKey;
 import com.steiner.make_a_orm.key.PrimaryKey;
 import com.steiner.make_a_orm.statement.delete.DeleteStatement;
 import com.steiner.make_a_orm.statement.insert.InsertStatement;
+import com.steiner.make_a_orm.statement.jointable.JoinSelectStatement;
+import com.steiner.make_a_orm.statement.jointable.JoinType;
 import com.steiner.make_a_orm.statement.select.ResultRow;
 import com.steiner.make_a_orm.statement.select.SelectStatement;
 import com.steiner.make_a_orm.statement.update.UpdateStatement;
@@ -34,7 +36,7 @@ import java.util.stream.Collectors;
 
 public abstract class Table implements IToSQL {
     @Nonnull
-    public String name;
+    private String name;
 
 
     // 不要修改 primaryKey 的获取 顺序，不然就会 因为 初始顺序不对，导致 `idName` 为空
@@ -124,6 +126,32 @@ public abstract class Table implements IToSQL {
         ForeignKey<T> key = new ForeignKey<>(name, fromColumn);
         foreignKeys.add(key);
         return key;
+    }
+
+    // Join Table
+    @Nonnull
+    private JoinTable join(@Nonnull JoinType joinType, @Nonnull Table other, @Nonnull Column<?> onColumn, @Nonnull Column<?> otherColumn) {
+        return new JoinTable(joinType, this, onColumn, other, otherColumn);
+    }
+
+    @Nonnull
+    public JoinTable leftJoin(@Nonnull Table other, @Nonnull Column<?> onColumn, @Nonnull Column<?> otherColumn) {
+        return this.join(JoinType.Left, other, onColumn, otherColumn);
+    }
+
+    @Nonnull
+    public JoinTable rightJoin(@Nonnull Table other, @Nonnull Column<?> onColumn, @Nonnull Column<?> otherColumn) {
+        return this.join(JoinType.Right, other, onColumn, otherColumn);
+    }
+
+    @Nonnull
+    public JoinTable innerJoin(@Nonnull Table other, @Nonnull Column<?> onColumn, @Nonnull Column<?> otherColumn) {
+        return this.join(JoinType.Inner, other, onColumn, otherColumn);
+    }
+
+    @Nonnull
+    public JoinTable outerJoin(@Nonnull Table other, @Nonnull Column<?> onColumn, @Nonnull Column<?> otherColumn) {
+        return this.join(JoinType.Outer, other, onColumn, otherColumn);
     }
 
 
@@ -303,5 +331,10 @@ public abstract class Table implements IToSQL {
         } else {
             return false;
         }
+    }
+
+    @Nonnull
+    public String getName() {
+        return this.name;
     }
 }
