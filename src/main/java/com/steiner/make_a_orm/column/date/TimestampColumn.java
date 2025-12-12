@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
 
 public class TimestampColumn extends Column<java.time.LocalDateTime>
         implements
-        IEqual<java.time.LocalDateTime, TimestampColumn>,
-        ICompare<java.time.LocalDateTime, TimestampColumn>,
-        INullOrNot<java.time.LocalDateTime, TimestampColumn>,
-        IBetween<java.time.LocalDateTime, TimestampColumn>,
-        IInList<java.time.LocalDateTime, TimestampColumn> {
+        IEqual<LocalDateTime, TimestampColumn>,
+        ICompare<LocalDateTime, TimestampColumn>,
+        INullOrNot<LocalDateTime, TimestampColumn>,
+        IBetween<LocalDateTime, TimestampColumn>,
+        IInList<LocalDateTime, TimestampColumn> {
 
     public TimestampColumn(@Nonnull String name, @Nonnull Table fromTable) {
         super(name, fromTable);

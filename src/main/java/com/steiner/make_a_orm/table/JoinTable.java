@@ -3,8 +3,8 @@ package com.steiner.make_a_orm.table;
 import com.steiner.make_a_orm.Errors;
 import com.steiner.make_a_orm.IToSQL;
 import com.steiner.make_a_orm.column.Column;
-import com.steiner.make_a_orm.statement.jointable.JoinSelectStatement;
-import com.steiner.make_a_orm.statement.jointable.JoinType;
+import com.steiner.make_a_orm.statement.select.JoinStatement;
+import com.steiner.make_a_orm.statement.select.JoinType;
 import com.steiner.make_a_orm.util.Quote;
 import jakarta.annotation.Nonnull;
 
@@ -40,7 +40,7 @@ public class JoinTable implements IToSQL {
         this.rightColumn = rightColumn;
     }
 
-    public JoinSelectStatement select(@Nonnull Column<?> column, @Nonnull Column<?>... otherColumns) {
+    public JoinStatement select(@Nonnull Column<?> column, @Nonnull Column<?>... otherColumns) {
         checkColumn(column);
         for (Column<?> otherColumn : otherColumns) {
             checkColumn(otherColumn);
@@ -50,7 +50,7 @@ public class JoinTable implements IToSQL {
         sliceColumns.add(column);
         sliceColumns.addAll(List.of(otherColumns));
 
-        return new JoinSelectStatement(this, sliceColumns);
+        return new JoinStatement(this, sliceColumns);
     }
 
     private void checkColumn(@Nonnull Column<?> column) {

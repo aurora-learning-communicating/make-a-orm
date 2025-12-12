@@ -1,4 +1,4 @@
 database:
-  url: "jdbc:postgresql://192.168.1.10/orm-test"
-  username: "steiner"
+  url: "jdbc:postgresql://localhost/orm-test"
+  username: "pg-steiner"
   password: "779151714"

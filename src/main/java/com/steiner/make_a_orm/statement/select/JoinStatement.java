@@ -1,11 +1,8 @@
-package com.steiner.make_a_orm.statement.jointable;
+package com.steiner.make_a_orm.statement.select;
 
-import com.steiner.make_a_orm.Errors;
 import com.steiner.make_a_orm.IToSQL;
 import com.steiner.make_a_orm.column.Column;
-import com.steiner.make_a_orm.statement.select.ResultRow;
 import com.steiner.make_a_orm.table.JoinTable;
-import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.transaction.Transaction;
 import com.steiner.make_a_orm.util.Quote;
 import com.steiner.make_a_orm.where.WhereTopStatement;
@@ -27,8 +24,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class JoinSelectStatement implements Spliterator<ResultRow>, IToSQL {
-    private static final Logger logger = LoggerFactory.getLogger("JoinSelectStatement");
+public class JoinStatement implements Spliterator<ResultRow>, IToSQL {
+    private static final Logger logger = LoggerFactory.getLogger("JoinStatement");
 
     @Nonnull
     public JoinTable joinTable;
@@ -55,7 +52,7 @@ public class JoinSelectStatement implements Spliterator<ResultRow>, IToSQL {
     @Nonnull
     public Connection connection;
 
-    public JoinSelectStatement(@Nonnull JoinTable joinTable, @Nonnull List<Column<?>> sliceColumns) {
+    public JoinStatement(@Nonnull JoinTable joinTable, @Nonnull List<Column<?>> sliceColumns) {
         this.joinTable = joinTable;
         this.sliceColumns = sliceColumns;
 
@@ -70,39 +67,37 @@ public class JoinSelectStatement implements Spliterator<ResultRow>, IToSQL {
     }
 
 
-    public JoinSelectStatement where(@Nonnull WhereStatement statement) {
+    public JoinStatement where(@Nonnull WhereStatement statement) {
         this.whereStatement = new WhereTopStatement(statement);
         return this;
     }
 
-    public JoinSelectStatement where(@Nonnull Supplier<WhereStatement> block) {
+    public JoinStatement where(@Nonnull Supplier<WhereStatement> block) {
         this.whereStatement = new WhereTopStatement(block.get());
         return this;
     }
 
-    public JoinSelectStatement orderBy(@Nonnull Column<?> column) {
+    public JoinStatement orderBy(@Nonnull Column<?> column) {
         this.orderBy = column;
         return this;
     }
 
-    public JoinSelectStatement orderBy(@Nonnull Column<?> column, boolean reversed) {
+    public JoinStatement orderBy(@Nonnull Column<?> column, boolean reversed) {
         this.orderBy = column;
         this.reversed = reversed;
         return this;
     }
 
-    public JoinSelectStatement limit(long value) {
+    public JoinStatement limit(long value) {
         this.limit = value;
         return this;
     }
 
-    public JoinSelectStatement offset(long value) {
+    public JoinStatement offset(long value) {
         this.offset = value;
         return this;
     }
 
-
-    // TODO: groupby
 
     @Nonnull
     public Stream<ResultRow> stream() {

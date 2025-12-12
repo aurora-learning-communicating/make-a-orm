@@ -1,6 +1,8 @@
 package com.steiner.make_a_orm.column.numeric;
 
 import com.steiner.make_a_orm.Errors;
+import com.steiner.make_a_orm.aggregate.Summary;
+import com.steiner.make_a_orm.column.trait.aggregate.ISummary;
 import com.steiner.make_a_orm.column.trait.predicate.*;
 import com.steiner.make_a_orm.table.Table;
 import jakarta.annotation.Nonnull;
@@ -12,13 +14,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-public class FloatColumn extends NumericColumn<Float>
+public class FloatColumn extends NumberColumn<Float>
         implements
         IEqual<Float, FloatColumn>,
         ICompare<Float, FloatColumn>,
         IBetween<Float, FloatColumn>,
         IInList<Float, FloatColumn>,
-        INullOrNot<Float, FloatColumn> {
+        INullOrNot<Float, FloatColumn>,
+        ISummary<Float, Float> {
     public FloatColumn(@Nonnull String name, @Nonnull Table fromTable) {
         super(name, fromTable);
     }
@@ -26,7 +29,7 @@ public class FloatColumn extends NumericColumn<Float>
     @Nonnull
     @Override
     public String typeQuote() {
-        return "float";
+        return "real";
     }
 
     @Override
@@ -57,5 +60,17 @@ public class FloatColumn extends NumericColumn<Float>
     @Override
     public FloatColumn self() {
         return this;
+    }
+
+    @Nonnull
+    @Override
+    public Summary<Float, Float> sum() {
+        return new Summary<Float, Float>(this) {
+            @Nullable
+            @Override
+            public Float read(@Nonnull ResultSet resultSet) throws SQLException {
+                return resultSet.getFloat(alias());
+            }
+        };
     }
 }

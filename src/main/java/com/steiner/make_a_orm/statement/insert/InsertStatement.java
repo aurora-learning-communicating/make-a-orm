@@ -28,7 +28,7 @@ public class InsertStatement implements IToSQL {
     @Nonnull
     public boolean[] insertedBits; // insert 没有指定字段时，查看这个字段有没有被设置
     @Nonnull
-    public Map<Column<?>, Integer> indexMap; // 与 isnertedBits 相互配合
+    public Map<Column<?>, Integer> indexMap; // 与 insertedBits 相互配合
     @Nonnull
     public Connection connection;
 

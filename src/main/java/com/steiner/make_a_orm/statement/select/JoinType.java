@@ -1,4 +1,4 @@
-package com.steiner.make_a_orm.statement.jointable;
+package com.steiner.make_a_orm.statement.select;
 
 import jakarta.annotation.Nonnull;
 

@@ -12,11 +12,11 @@ import java.time.LocalTime;
 
 public class TimeColumn extends Column<java.time.LocalTime>
         implements
-        IEqual<java.time.LocalTime, TimeColumn>,
-        ICompare<java.time.LocalTime, TimeColumn>,
-        INullOrNot<java.time.LocalTime, TimeColumn>,
-        IBetween<java.time.LocalTime, TimeColumn>,
-        IInList<java.time.LocalTime, TimeColumn> {
+        IEqual<LocalTime, TimeColumn>,
+        ICompare<LocalTime, TimeColumn>,
+        INullOrNot<LocalTime, TimeColumn>,
+        IBetween<LocalTime, TimeColumn>,
+        IInList<LocalTime, TimeColumn> {
 
     public TimeColumn(@Nonnull String name, @Nonnull Table fromTable) {
         super(name, fromTable);

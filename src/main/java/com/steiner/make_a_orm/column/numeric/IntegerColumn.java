@@ -1,6 +1,8 @@
 package com.steiner.make_a_orm.column.numeric;
 
 import com.steiner.make_a_orm.Errors;
+import com.steiner.make_a_orm.aggregate.Summary;
+import com.steiner.make_a_orm.column.trait.aggregate.ISummary;
 import com.steiner.make_a_orm.column.trait.predicate.ICompare;
 import com.steiner.make_a_orm.column.trait.predicate.IEqual;
 import com.steiner.make_a_orm.column.trait.predicate.IInList;
@@ -15,12 +17,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-public class IntegerColumn extends NumericColumn<Integer>
+public class IntegerColumn extends NumberColumn<Integer>
         implements
         IEqual<Integer, IntegerColumn>,
         ICompare<Integer, IntegerColumn>,
         IInList<Integer, IntegerColumn>,
-        INullOrNot<Integer, IntegerColumn> {
+        INullOrNot<Integer, IntegerColumn>,
+        ISummary<Integer, Long> {
 
     public IntegerColumn(@Nonnull String name, @Nonnull Table fromTable) {
         super(name, fromTable);
@@ -29,7 +32,12 @@ public class IntegerColumn extends NumericColumn<Integer>
     @Nonnull
     @Override
     public String typeQuote() {
-        return "int";
+        if (isAutoIncrement) {
+            return "serial";
+        } else {
+            return "integer";
+        }
+
     }
 
     @Override
@@ -60,5 +68,17 @@ public class IntegerColumn extends NumericColumn<Integer>
     @Override
     public IntegerColumn self() {
         return this;
+    }
+
+    @Nonnull
+    @Override
+    public Summary<Integer, Long> sum() {
+        return new Summary<Integer, Long>(this) {
+            @Nullable
+            @Override
+            public Long read(@Nonnull ResultSet resultSet) throws SQLException {
+                return resultSet.getLong(alias());
+            }
+        };
     }
 }

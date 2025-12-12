@@ -16,7 +16,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -95,8 +94,6 @@ public class SelectStatement implements Spliterator<ResultRow>, IToSQL {
         this.offset = value;
         return this;
     }
-
-    // TODO: groupby
 
 
     @Nonnull

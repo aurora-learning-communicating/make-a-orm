@@ -2,7 +2,7 @@ package com.steiner.make_a_orm.key;
 
 import com.steiner.make_a_orm.Errors;
 import com.steiner.make_a_orm.column.Column;
-import com.steiner.make_a_orm.column.numeric.NumericColumn;
+import com.steiner.make_a_orm.column.numeric.NumberColumn;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.util.Quote;
 import jakarta.annotation.Nonnull;
@@ -27,7 +27,7 @@ public abstract class PrimaryKey extends Key {
             this.fromColumn.isPrimaryKey = true;
         }
 
-        public <N extends NumericColumn<?>> Single<N> autoIncrement() {
+        public <N extends NumberColumn<?>> Single<N> autoIncrement() {
             fromColumn.isAutoIncrement = true;
             return (Single<N>) this;
         }

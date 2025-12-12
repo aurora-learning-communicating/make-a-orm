@@ -1,6 +1,8 @@
 package com.steiner.make_a_orm.column.numeric;
 
 import com.steiner.make_a_orm.Errors;
+import com.steiner.make_a_orm.aggregate.Summary;
+import com.steiner.make_a_orm.column.trait.aggregate.ISummary;
 import com.steiner.make_a_orm.column.trait.predicate.*;
 import com.steiner.make_a_orm.table.Table;
 import jakarta.annotation.Nonnull;
@@ -12,13 +14,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-public class SmallIntColumn extends NumericColumn<Short>
+public class SmallIntColumn extends NumberColumn<Short>
         implements
         IEqual<Short, SmallIntColumn>,
         ICompare<Short, SmallIntColumn>,
         IBetween<Short, SmallIntColumn>,
         IInList<Short, SmallIntColumn>,
-        INullOrNot<Short, SmallIntColumn> {
+        INullOrNot<Short, SmallIntColumn>,
+        ISummary<Short, Long> {
     public SmallIntColumn(@Nonnull String name, @Nonnull Table fromTable) {
         super(name, fromTable);
     }
@@ -26,7 +29,11 @@ public class SmallIntColumn extends NumericColumn<Short>
     @Nonnull
     @Override
     public String typeQuote() {
-        return "smallint";
+        if (isAutoIncrement) {
+            return "smallserial";
+        } else {
+            return "smallint";
+        }
     }
 
     @Override
@@ -57,5 +64,17 @@ public class SmallIntColumn extends NumericColumn<Short>
     @Override
     public SmallIntColumn self() {
         return this;
+    }
+
+    @Nonnull
+    @Override
+    public Summary<Short, Long> sum() {
+        return new Summary<Short, Long>(this) {
+            @Nullable
+            @Override
+            public Long read(@Nonnull ResultSet resultSet) throws SQLException {
+                return resultSet.getLong(alias());
+            }
+        };
     }
 }

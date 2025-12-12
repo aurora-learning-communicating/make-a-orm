@@ -5,7 +5,7 @@ import com.steiner.make_a_orm.column.Column;
 import com.steiner.make_a_orm.column.date.DateColumn;
 import com.steiner.make_a_orm.column.date.TimeColumn;
 import com.steiner.make_a_orm.column.date.TimestampColumn;
-import com.steiner.make_a_orm.column.numeric.NumericColumn;
+import com.steiner.make_a_orm.column.numeric.NumberColumn;
 import com.steiner.make_a_orm.column.string.StringColumn;
 import com.steiner.make_a_orm.IToSQL;
 import com.steiner.make_a_orm.table.Table;
@@ -68,7 +68,7 @@ public class UpdateStatement implements IToSQL {
         this.expressions.add(pattern);
     }
 
-    public <T extends Number & Comparable<T>, E extends NumericColumn<T>>
+    public <T extends Number & Comparable<T>, E extends NumberColumn<T>>
     void plus(@Nonnull E column, @Nonnull T value) {
         checkModify(column);
 
@@ -77,7 +77,7 @@ public class UpdateStatement implements IToSQL {
         this.expressions.add(expression);
     }
 
-    public <T extends Number & Comparable<T>, E extends NumericColumn<T>>
+    public <T extends Number & Comparable<T>, E extends NumberColumn<T>>
     void minus(@Nonnull E column, @Nonnull T value) {
         checkModify(column);
 
@@ -86,7 +86,7 @@ public class UpdateStatement implements IToSQL {
         this.expressions.add(expression);
     }
 
-    public <T extends Number & Comparable<T>, E extends NumericColumn<T>>
+    public <T extends Number & Comparable<T>, E extends NumberColumn<T>>
     void times(@Nonnull E column, @Nonnull T value) {
         checkModify(column);
 
@@ -95,7 +95,7 @@ public class UpdateStatement implements IToSQL {
         this.expressions.add(expression);
     }
 
-    public <T extends Number & Comparable<T>, E extends NumericColumn<T>>
+    public <T extends Number & Comparable<T>, E extends NumberColumn<T>>
     void div(@Nonnull E column, @Nonnull T value) {
         checkModify(column);
 

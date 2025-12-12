@@ -12,11 +12,11 @@ import java.time.LocalDate;
 
 public class DateColumn extends Column<java.time.LocalDate>
         implements
-        IEqual<java.time.LocalDate, DateColumn>,
-        ICompare<java.time.LocalDate, DateColumn>,
-        IBetween<java.time.LocalDate, DateColumn>,
-        INullOrNot<java.time.LocalDate, DateColumn>,
-        IInList<java.time.LocalDate, DateColumn> {
+        IEqual<LocalDate, DateColumn>,
+        ICompare<LocalDate, DateColumn>,
+        IBetween<LocalDate, DateColumn>,
+        INullOrNot<LocalDate, DateColumn>,
+        IInList<LocalDate, DateColumn> {
 
     public DateColumn(@Nonnull String name, @Nonnull Table fromTable) {
         super(name, fromTable);

@@ -1,6 +1,8 @@
 package com.steiner.make_a_orm.column.numeric;
 
 import com.steiner.make_a_orm.Errors;
+import com.steiner.make_a_orm.aggregate.Summary;
+import com.steiner.make_a_orm.column.trait.aggregate.ISummary;
 import com.steiner.make_a_orm.column.trait.predicate.*;
 import com.steiner.make_a_orm.table.Table;
 import jakarta.annotation.Nonnull;
@@ -12,13 +14,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-public class TinyIntColumn extends NumericColumn<Byte>
+public class TinyIntColumn extends NumberColumn<Byte>
         implements
         IEqual<Byte, TinyIntColumn>,
         ICompare<Byte, TinyIntColumn>,
         IBetween<Byte, TinyIntColumn>,
         IInList<Byte, TinyIntColumn>,
-        INullOrNot<Byte, TinyIntColumn> {
+        INullOrNot<Byte, TinyIntColumn>,
+        ISummary<Byte, Long> {
     public TinyIntColumn(@Nonnull String name, @Nonnull Table fromTable) {
         super(name, fromTable);
     }
@@ -26,7 +29,11 @@ public class TinyIntColumn extends NumericColumn<Byte>
     @Nonnull
     @Override
     public String typeQuote() {
-        return "tinyint";
+        if (isAutoIncrement) {
+            return "smallserial";
+        } else {
+            return "tinyint";
+        }
     }
 
     @Override
@@ -57,5 +64,17 @@ public class TinyIntColumn extends NumericColumn<Byte>
     @Override
     public TinyIntColumn self() {
         return this;
+    }
+
+    @Nonnull
+    @Override
+    public Summary<Byte, Long> sum() {
+        return new Summary<Byte, Long>(this) {
+            @Nullable
+            @Override
+            public Long read(@Nonnull ResultSet resultSet) throws SQLException {
+                return resultSet.getLong(alias());
+            }
+        };
     }
 }

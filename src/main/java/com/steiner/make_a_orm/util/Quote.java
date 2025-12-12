@@ -9,7 +9,8 @@ public class Quote {
     public static final String literalFormatter = "'%s'";
     public static final String tableFormatter = "\"%s\"";
     public static final String columnFormatter = "\"%s\"";
-    public static final String autoIncrement = "auto_increment";
+    // public static final String autoIncrement = "auto_increment";
+    public static final String autoIncrement = "";
     public static final String slot = "?";
 
     @Nonnull
@@ -27,6 +28,12 @@ public class Quote {
     @Nonnull
     public static String quoteColumn(@Nonnull Column<?> column) {
         return "%s".formatted(columnFormatter.formatted(column.name));
+    }
+
+    @Nonnull
+    public static String quoteAggregate(@Nonnull String prefix, @Nonnull Column<?> column) {
+        String pattern = "%s_%s_%s".formatted(prefix, column.fromTable.getName(), column.name);
+        return columnFormatter.formatted(pattern);
     }
 
     @Nonnull

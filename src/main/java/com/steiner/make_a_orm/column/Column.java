@@ -1,6 +1,7 @@
 package com.steiner.make_a_orm.column;
 
 import com.steiner.make_a_orm.IToSQL;
+import com.steiner.make_a_orm.aggregate.Count;
 import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.util.DefaultExpression;
@@ -120,6 +121,13 @@ public abstract class Column<T> implements IToSQL {
 
         Objects.requireNonNull(this.defaultExpression);
         this.defaultExpression.writeIntoStatement(this, statement, index);
+    }
+
+
+    // 聚合函数
+    @Nonnull
+    public Count count() {
+        return new Count(this);
     }
 
     @Nonnull

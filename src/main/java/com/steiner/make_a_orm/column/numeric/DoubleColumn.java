@@ -1,6 +1,8 @@
 package com.steiner.make_a_orm.column.numeric;
 
 import com.steiner.make_a_orm.Errors;
+import com.steiner.make_a_orm.aggregate.Summary;
+import com.steiner.make_a_orm.column.trait.aggregate.ISummary;
 import com.steiner.make_a_orm.column.trait.predicate.*;
 import com.steiner.make_a_orm.table.Table;
 import jakarta.annotation.Nonnull;
@@ -12,13 +14,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-public class DoubleColumn extends NumericColumn<Double>
+public class DoubleColumn extends NumberColumn<Double>
         implements
         IEqual<Double, DoubleColumn>,
         ICompare<Double, DoubleColumn>,
         IBetween<Double, DoubleColumn>,
         IInList<Double, DoubleColumn>,
-        INullOrNot<Double, DoubleColumn> {
+        INullOrNot<Double, DoubleColumn>,
+        ISummary<Double, Double> {
     public DoubleColumn(@Nonnull String name, @Nonnull Table fromTable) {
         super(name, fromTable);
     }
@@ -26,7 +29,7 @@ public class DoubleColumn extends NumericColumn<Double>
     @Nonnull
     @Override
     public String typeQuote() {
-        return "double";
+        return "double precision";
     }
 
     @Override
@@ -58,5 +61,17 @@ public class DoubleColumn extends NumericColumn<Double>
     @Override
     public DoubleColumn self() {
         return this;
+    }
+
+    @Nonnull
+    @Override
+    public Summary<Double, Double> sum() {
+        return new Summary<Double, Double>(this) {
+            @Nullable
+            @Override
+            public Double read(@Nonnull ResultSet resultSet) throws SQLException {
+                return resultSet.getDouble(alias());
+            }
+        };
     }
 }

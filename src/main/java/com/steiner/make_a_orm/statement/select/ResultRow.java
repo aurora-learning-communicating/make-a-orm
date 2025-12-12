@@ -1,9 +1,8 @@
 package com.steiner.make_a_orm.statement.select;
 
 import com.steiner.make_a_orm.Errors;
+import com.steiner.make_a_orm.aggregate.Aggregate;
 import com.steiner.make_a_orm.column.Column;
-import com.steiner.make_a_orm.exception.SQLRuntimeException;
-import com.steiner.make_a_orm.util.Quote;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -45,6 +44,34 @@ public class ResultRow {
         @Nullable T result = null;
         try {
             result = column.read(resultSet);
+            return result;
+        } catch (SQLException exception) {
+            throw Errors.ReadError(exception);
+        }
+    }
+
+    @Nonnull
+    public <T> T get(@Nonnull Aggregate<T> aggregate) {
+        @Nullable T result = null;
+
+        try {
+            result = aggregate.read(resultSet);
+        } catch (SQLException exception) {
+            throw Errors.ReadError(exception);
+        }
+
+        if (result == null) {
+            throw Errors.GetNull;
+        }
+
+        return result;
+    }
+
+    @Nullable
+    public <T> T getOrNull(@Nonnull Aggregate<T> aggregate) {
+        @Nullable T result = null;
+        try {
+            result = aggregate.read(resultSet);
             return result;
         } catch (SQLException exception) {
             throw Errors.ReadError(exception);

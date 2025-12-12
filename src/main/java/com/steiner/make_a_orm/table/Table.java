@@ -14,8 +14,7 @@ import com.steiner.make_a_orm.key.ForeignKey;
 import com.steiner.make_a_orm.key.PrimaryKey;
 import com.steiner.make_a_orm.statement.delete.DeleteStatement;
 import com.steiner.make_a_orm.statement.insert.InsertStatement;
-import com.steiner.make_a_orm.statement.jointable.JoinSelectStatement;
-import com.steiner.make_a_orm.statement.jointable.JoinType;
+import com.steiner.make_a_orm.statement.select.JoinType;
 import com.steiner.make_a_orm.statement.select.ResultRow;
 import com.steiner.make_a_orm.statement.select.SelectStatement;
 import com.steiner.make_a_orm.statement.update.UpdateStatement;
@@ -36,7 +35,7 @@ import java.util.stream.Collectors;
 
 public abstract class Table implements IToSQL {
     @Nonnull
-    private String name;
+    private final String name;
 
 
     // 不要修改 primaryKey 的获取 顺序，不然就会 因为 初始顺序不对，导致 `idName` 为空
@@ -71,53 +70,67 @@ public abstract class Table implements IToSQL {
         return registerColumn(new BigIntColumn(name, this));
     }
 
+    @Nonnull
     protected DoubleColumn float64(@Nonnull String name) {
         return registerColumn(new DoubleColumn(name, this));
     }
 
+    @Nonnull
     protected FloatColumn float32(@Nonnull String name) {
         return registerColumn(new FloatColumn(name, this));
     }
 
+    @Nonnull
+    protected DecimalColumn decimal(@Nonnull String name, int precision, int scale) {
+        return registerColumn(new DecimalColumn(name, this, precision, scale));
+    }
+
+    @Nonnull
     protected IntegerColumn integer(@Nonnull String name) {
         return registerColumn(new IntegerColumn(name, this));
     }
 
+    @Nonnull
     protected SmallIntColumn smallint(@Nonnull String name) {
         return registerColumn(new SmallIntColumn(name, this));
     }
 
+    @Nonnull
     protected TinyIntColumn tinyint(@Nonnull String name) {
         return registerColumn(new TinyIntColumn(name, this));
     }
 
+    @Nonnull
     protected CharacterColumn character(@Nonnull String name, int length) {
         return registerColumn(new CharacterColumn(name, this, length));
     }
 
+    @Nonnull
     protected CharacterVaryingColumn characterVarying(@Nonnull String name, int length) {
         return registerColumn(new CharacterVaryingColumn(name, this, length));
     }
 
+    @Nonnull
     protected TextColumn text(@Nonnull String name) {
         return registerColumn(new TextColumn(name, this));
     }
 
+    @Nonnull
     protected DateColumn date(@Nonnull String name) {
         return registerColumn(new DateColumn(name, this));
     }
 
+    @Nonnull
     protected TimeColumn time(@Nonnull String name) {
         return registerColumn(new TimeColumn(name, this));
     }
 
+    @Nonnull
     protected TimestampColumn timestamp(@Nonnull String name) {
         return registerColumn(new TimestampColumn(name, this));
     }
 
-
-
-
+    @Nonnull
     protected <T extends Column<?>> ForeignKey<T> reference(@Nonnull String name, @Nonnull T fromColumn) {
         if (!fromColumn.isUnique && !fromColumn.isPrimaryKey) {
             throw Errors.ForeignKeyError;
@@ -173,6 +186,9 @@ public abstract class Table implements IToSQL {
 
         return new SelectStatement(this, columns);
     }
+
+    // group by
+
 
     @Nonnull
     public SelectStatement selectAll() {
