@@ -1,7 +1,6 @@
 package com.steiner.make_a_orm;
 
 import com.steiner.make_a_orm.column.numeric.DecimalColumn;
-import com.steiner.make_a_orm.column.numeric.DoubleColumn;
 import com.steiner.make_a_orm.column.string.TextColumn;
 import com.steiner.make_a_orm.database.Database;
 import com.steiner.make_a_orm.table.impl.IntIdTable;
@@ -67,9 +66,19 @@ public class TestAggregate {
 
     // group by
     @Test
-    public void testCount() {
+    public void testSumAndAvg() {
         Transaction.transaction(database, () -> {
-            employees.select
+            employees.select(employees.department, employees.salary.sum(), employees.salary.avg())
+                    .groupBy(employees.department)
+                    .stream()
+                    .forEach(resultRow -> {
+                        String department = resultRow.get(employees.department);
+                        BigDecimal sum = resultRow.get(employees.salary.sum());
+                        BigDecimal avg = resultRow.get(employees.salary.avg(2));
+
+                        System.out.println("department: %s, sum: %s, avg: %s".formatted(department, sum, avg));
+                    });
+
         });
     }
 }

@@ -1,5 +1,6 @@
 package com.steiner.make_a_orm;
 
+import com.steiner.make_a_orm.aggregate.Aggregate;
 import com.steiner.make_a_orm.column.Column;
 import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.exception.SQLRuntimeException;
@@ -27,6 +28,17 @@ public class Errors {
     public static SQLBuildException SetNull = new SQLBuildException("cannot set the non-null column with null");
     public static SQLBuildException DivByZero = new SQLBuildException("div by zero");
     public static SQLBuildException TableNotTheSame = new SQLBuildException("columns not from the same table");
+
+
+    public static SQLBuildException GroupByColumnNotMatch(@Nonnull Column<?> column) {
+        return new SQLBuildException("column %s must appear in the group by clause, or be used in a aggregate function".formatted(Quote.quoteColumnStandalone(column)));
+    }
+
+    public static SQLBuildException GroupByOrderBySetError = new SQLBuildException("in group by, order by not set");
+    public static SQLBuildException GroupByAggregateNotInclude(@Nonnull Aggregate<?> aggregate) {
+        return new SQLBuildException("aggregate %s not include in this group by".formatted(aggregate.alias()));
+    }
+
     public static SQLBuildException NoDefaultValueSet(@Nonnull Column<?> column) {
         return new SQLBuildException("there is no default value set in the %s".formatted(column.name));
     }

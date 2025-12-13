@@ -79,6 +79,7 @@ public class JoinStatement implements Spliterator<ResultRow>, IToSQL {
 
     public JoinStatement orderBy(@Nonnull Column<?> column) {
         this.orderBy = column;
+        this.reversed = false;
         return this;
     }
 

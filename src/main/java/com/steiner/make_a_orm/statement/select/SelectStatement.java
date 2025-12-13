@@ -33,12 +33,6 @@ public class SelectStatement implements Spliterator<ResultRow>, IToSQL {
     @Nonnull
     public List<Column<?>> sliceColumns;
     @Nullable
-    public ResultSet resultSet;
-    @Nullable
-    public ResultRow resultRow;
-    @Nullable
-    private WhereTopStatement whereStatement;
-    @Nullable
     public Column<?> orderBy;
 
     public boolean reversed;
@@ -50,6 +44,13 @@ public class SelectStatement implements Spliterator<ResultRow>, IToSQL {
 
     @Nonnull
     public Connection connection;
+
+    @Nullable
+    public ResultSet resultSet;
+    @Nullable
+    public ResultRow resultRow;
+    @Nullable
+    private WhereTopStatement whereStatement;
 
     public SelectStatement(@Nonnull Table table, @Nonnull List<Column<?>> sliceColumns) {
         this.table = table;
@@ -76,6 +77,7 @@ public class SelectStatement implements Spliterator<ResultRow>, IToSQL {
 
     public SelectStatement orderBy(@Nonnull Column<?> column) {
         this.orderBy = column;
+        this.reversed = false;
         return this;
     }
 
@@ -158,6 +160,8 @@ public class SelectStatement implements Spliterator<ResultRow>, IToSQL {
     @Override
     public String toSQL() {
         StringBuilder stringBuilder = new StringBuilder();
+
+        // 可以是 quoteColumn
         String columnNames = sliceColumns.stream()
                 .map(Quote::quoteColumnStandalone)
                 .collect(Collectors.joining(", "));

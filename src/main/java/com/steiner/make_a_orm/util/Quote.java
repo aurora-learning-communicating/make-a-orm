@@ -32,8 +32,7 @@ public class Quote {
 
     @Nonnull
     public static String quoteAggregate(@Nonnull String prefix, @Nonnull Column<?> column) {
-        String pattern = "%s_%s_%s".formatted(prefix, column.fromTable.getName(), column.name);
-        return columnFormatter.formatted(pattern);
+        return "%s_%s_%s".formatted(prefix, column.fromTable.getName(), column.name);
     }
 
     @Nonnull

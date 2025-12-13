@@ -1,6 +1,7 @@
 package com.steiner.make_a_orm.table;
 
 import com.steiner.make_a_orm.IToSQL;
+import com.steiner.make_a_orm.aggregate.Aggregate;
 import com.steiner.make_a_orm.column.Column;
 import com.steiner.make_a_orm.column.date.DateColumn;
 import com.steiner.make_a_orm.column.date.TimeColumn;
@@ -14,6 +15,7 @@ import com.steiner.make_a_orm.key.ForeignKey;
 import com.steiner.make_a_orm.key.PrimaryKey;
 import com.steiner.make_a_orm.statement.delete.DeleteStatement;
 import com.steiner.make_a_orm.statement.insert.InsertStatement;
+import com.steiner.make_a_orm.statement.select.GroupByStatement;
 import com.steiner.make_a_orm.statement.select.JoinType;
 import com.steiner.make_a_orm.statement.select.ResultRow;
 import com.steiner.make_a_orm.statement.select.SelectStatement;
@@ -171,7 +173,7 @@ public abstract class Table implements IToSQL {
     // For Query
     @Nonnull
     public SelectStatement select(@Nonnull Column<?> column, @Nonnull Column<?>... otherColumns) {
-        if (column.fromTable != this) {
+        if (!column.fromTable.equals(this)) {
             throw Errors.TableNotTheSame;
         }
 
@@ -188,7 +190,32 @@ public abstract class Table implements IToSQL {
     }
 
     // group by
+    // 1. select(aggregates...)
+    // 2. select(column, aggregates...)
+    @Nonnull
+    public GroupByStatement select(@Nonnull Aggregate<?>... aggregates) {
+        boolean flag = Arrays.stream(aggregates).anyMatch(aggregate -> !aggregate.column.fromTable.equals(this));
+        if (flag) {
+            throw Errors.TableNotTheSame;
+        }
 
+        return new GroupByStatement(this, List.of(aggregates));
+    }
+
+
+    @Nonnull
+    public GroupByStatement select(@Nonnull Column<?> column, @Nonnull Aggregate<?>... aggregates) {
+        if (!column.fromTable.equals(this)) {
+            throw Errors.TableNotTheSame;
+        }
+
+        boolean flag = Arrays.stream(aggregates).anyMatch(aggregate -> !aggregate.column.fromTable.equals(this));
+        if (flag) {
+            throw Errors.TableNotTheSame;
+        }
+
+        return new GroupByStatement(this, List.of(aggregates)).groupBy(column);
+    }
 
     @Nonnull
     public SelectStatement selectAll() {
@@ -347,6 +374,11 @@ public abstract class Table implements IToSQL {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 
     @Nonnull
