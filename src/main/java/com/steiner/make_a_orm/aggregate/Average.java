@@ -6,6 +6,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -33,7 +34,13 @@ public class Average<T extends Number & Comparable<T>> extends Aggregate<BigDeci
     @Nullable
     @Override
     public BigDecimal read(@Nonnull ResultSet resultSet) throws SQLException {
-        return resultSet.getBigDecimal(alias());
+        BigDecimal decimal = resultSet.getBigDecimal(alias());
+
+        if (this.scale == null) {
+            return decimal;
+        } else {
+            return decimal.setScale(this.scale, RoundingMode.HALF_UP);
+        }
     }
 
     @Nonnull

@@ -32,7 +32,11 @@ public class Quote {
 
     @Nonnull
     public static String quoteAggregate(@Nonnull String prefix, @Nonnull Column<?> column) {
-        return "%s_%s_%s".formatted(prefix, column.fromTable.getName(), column.name);
+        String tableName = column.fromTable.getName().replace('-', '_');
+        String columnName = column.name.replace('-', '_');
+
+        // 好像在 jdbc 中，别名 (as) 不能 带引号，需要注意
+        return "%s_%s_%s".formatted(prefix, tableName, columnName);
     }
 
     @Nonnull
