@@ -1,4 +1,4 @@
-package com.steiner.make_a_orm.column.numeric;
+package com.steiner.make_a_orm.column.number;
 
 import com.steiner.make_a_orm.Errors;
 import com.steiner.make_a_orm.aggregate.Summary;
@@ -9,20 +9,21 @@ import jakarta.annotation.Nonnull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-public class TinyIntColumn extends NumberColumn<Byte>
+public class BigIntColumn extends NumberColumn<Long>
         implements
-        IEqual<Byte, TinyIntColumn>,
-        ICompare<Byte, TinyIntColumn>,
-        IBetween<Byte, TinyIntColumn>,
-        IInList<Byte, TinyIntColumn>,
-        INullOrNot<Byte, TinyIntColumn>,
-        ISummary<Byte, Long> {
-    public TinyIntColumn(@Nonnull String name, @Nonnull Table fromTable) {
+        IEqual<Long, BigIntColumn>,
+        ICompare<Long, BigIntColumn>,
+        IBetween<Long, BigIntColumn>,
+        INullOrNot<Long, BigIntColumn>,
+        IInList<Long, BigIntColumn>,
+        ISummary<Long, BigDecimal> {
+    public BigIntColumn(@Nonnull String name, @Nonnull Table fromTable) {
         super(name, fromTable);
     }
 
@@ -30,50 +31,50 @@ public class TinyIntColumn extends NumberColumn<Byte>
     @Override
     public String typeQuote() {
         if (isAutoIncrement) {
-            return "smallserial";
+            return "bigserial";
         } else {
-            return "tinyint";
+            return "bigint";
         }
     }
 
     @Override
     public int sqlType() {
-        return Types.TINYINT;
+        return Types.BIGINT;
     }
 
     @Override
-    public void write(@Nonnull PreparedStatement statement, int index, @Nonnull Byte value) throws SQLException {
-        statement.setByte(index, value);
+    public void write(@Nonnull PreparedStatement statement, int index, @Nonnull Long value) throws SQLException {
+        statement.setLong(index, value);
     }
 
     @Override
-    public @Nullable Byte read(@NotNull ResultSet resultSet) throws SQLException {
+    public @Nullable Long read(@NotNull ResultSet resultSet) throws SQLException {
         @Nullable Object value = resultSet.getObject(name);
         if (value == null) {
             return null;
         }
 
         return switch (value) {
-            case Byte result -> result;
-            case Number result -> result.byteValue();
+            case Long result -> result;
+            case Number result -> result.longValue();
             default -> throw Errors.UnExpectedValueType(value);
         };
     }
 
     @Nonnull
     @Override
-    public TinyIntColumn self() {
+    public BigIntColumn self() {
         return this;
     }
 
     @Nonnull
     @Override
-    public Summary<Byte, Long> sum() {
-        return new Summary<Byte, Long>(this) {
+    public Summary<Long, BigDecimal> sum() {
+        return new Summary<Long, BigDecimal>(this) {
             @Nullable
             @Override
-            public Long read(@Nonnull ResultSet resultSet) throws SQLException {
-                return resultSet.getLong(alias());
+            public BigDecimal read(@Nonnull ResultSet resultSet) throws SQLException {
+                return resultSet.getBigDecimal(alias());
             }
         };
     }

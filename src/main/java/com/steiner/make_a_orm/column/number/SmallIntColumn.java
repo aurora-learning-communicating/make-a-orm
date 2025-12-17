@@ -1,4 +1,4 @@
-package com.steiner.make_a_orm.column.numeric;
+package com.steiner.make_a_orm.column.number;
 
 import com.steiner.make_a_orm.Errors;
 import com.steiner.make_a_orm.aggregate.Summary;
@@ -9,21 +9,20 @@ import jakarta.annotation.Nonnull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-public class BigIntColumn extends NumberColumn<Long>
+public class SmallIntColumn extends NumberColumn<Short>
         implements
-        IEqual<Long, BigIntColumn>,
-        ICompare<Long, BigIntColumn>,
-        IBetween<Long, BigIntColumn>,
-        INullOrNot<Long, BigIntColumn>,
-        IInList<Long, BigIntColumn>,
-        ISummary<Long, BigDecimal> {
-    public BigIntColumn(@Nonnull String name, @Nonnull Table fromTable) {
+        IEqual<Short, SmallIntColumn>,
+        ICompare<Short, SmallIntColumn>,
+        IBetween<Short, SmallIntColumn>,
+        IInList<Short, SmallIntColumn>,
+        INullOrNot<Short, SmallIntColumn>,
+        ISummary<Short, Long> {
+    public SmallIntColumn(@Nonnull String name, @Nonnull Table fromTable) {
         super(name, fromTable);
     }
 
@@ -31,50 +30,50 @@ public class BigIntColumn extends NumberColumn<Long>
     @Override
     public String typeQuote() {
         if (isAutoIncrement) {
-            return "bigserial";
+            return "smallserial";
         } else {
-            return "bigint";
+            return "smallint";
         }
     }
 
     @Override
     public int sqlType() {
-        return Types.BIGINT;
+        return Types.SMALLINT;
     }
 
     @Override
-    public void write(@Nonnull PreparedStatement statement, int index, @Nonnull Long value) throws SQLException {
-        statement.setLong(index, value);
+    public void write(@Nonnull PreparedStatement statement, int index, @Nonnull Short value) throws SQLException {
+        statement.setShort(index, value);
     }
 
     @Override
-    public @Nullable Long read(@NotNull ResultSet resultSet) throws SQLException {
+    public @Nullable Short read(@NotNull ResultSet resultSet) throws SQLException {
         @Nullable Object value = resultSet.getObject(name);
         if (value == null) {
             return null;
         }
 
         return switch (value) {
-            case Long result -> result;
-            case Number result -> result.longValue();
+            case Short result -> result;
+            case Number result -> result.shortValue();
             default -> throw Errors.UnExpectedValueType(value);
         };
     }
 
     @Nonnull
     @Override
-    public BigIntColumn self() {
+    public SmallIntColumn self() {
         return this;
     }
 
     @Nonnull
     @Override
-    public Summary<Long, BigDecimal> sum() {
-        return new Summary<Long, BigDecimal>(this) {
+    public Summary<Short, Long> sum() {
+        return new Summary<Short, Long>(this) {
             @Nullable
             @Override
-            public BigDecimal read(@Nonnull ResultSet resultSet) throws SQLException {
-                return resultSet.getBigDecimal(alias());
+            public Long read(@Nonnull ResultSet resultSet) throws SQLException {
+                return resultSet.getLong(alias());
             }
         };
     }

@@ -5,7 +5,7 @@ import com.steiner.make_a_orm.column.Column;
 import com.steiner.make_a_orm.column.date.DateColumn;
 import com.steiner.make_a_orm.column.date.TimeColumn;
 import com.steiner.make_a_orm.column.date.TimestampColumn;
-import com.steiner.make_a_orm.column.numeric.NumberColumn;
+import com.steiner.make_a_orm.column.number.NumberColumn;
 import com.steiner.make_a_orm.column.string.StringColumn;
 import com.steiner.make_a_orm.IToSQL;
 import com.steiner.make_a_orm.table.Table;

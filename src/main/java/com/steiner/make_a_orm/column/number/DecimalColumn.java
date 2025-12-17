@@ -1,4 +1,4 @@
-package com.steiner.make_a_orm.column.numeric;
+package com.steiner.make_a_orm.column.number;
 
 import com.steiner.make_a_orm.aggregate.Summary;
 import com.steiner.make_a_orm.column.trait.aggregate.ISummary;

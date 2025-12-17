@@ -1,6 +1,6 @@
 package com.steiner.make_a_orm;
 
-import com.steiner.make_a_orm.column.numeric.DecimalColumn;
+import com.steiner.make_a_orm.column.number.DecimalColumn;
 import com.steiner.make_a_orm.column.string.TextColumn;
 import com.steiner.make_a_orm.database.Database;
 import com.steiner.make_a_orm.table.impl.IntIdTable;
@@ -68,15 +68,17 @@ public class TestAggregate {
     @Test
     public void testSumAndAvg() {
         Transaction.transaction(database, () -> {
-            employees.select(employees.department, employees.salary.sum(), employees.salary.avg())
+            employees.select(employees.department, employees.salary.min(), employees.salary.max(), employees.salary.sum(), employees.salary.avg(), employees.department.count())
                     .groupBy(employees.department)
                     .stream()
                     .forEach(resultRow -> {
                         String department = resultRow.get(employees.department);
                         BigDecimal sum = resultRow.get(employees.salary.sum());
                         BigDecimal avg = resultRow.get(employees.salary.avg(2));
-
-                        System.out.println("department: %s, sum: %s, avg: %s".formatted(department, sum, avg));
+                        BigDecimal max = resultRow.get(employees.salary.max());
+                        BigDecimal min = resultRow.get(employees.salary.min());
+                        long count = resultRow.get(employees.department.count());
+                        System.out.println("count: %s, department: %s, sum: %s, avg: %s, max: %s, min: %s".formatted(count, department, sum, avg, max, min));
                     });
 
         });

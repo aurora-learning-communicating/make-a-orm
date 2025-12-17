@@ -6,7 +6,7 @@ import com.steiner.make_a_orm.column.Column;
 import com.steiner.make_a_orm.column.date.DateColumn;
 import com.steiner.make_a_orm.column.date.TimeColumn;
 import com.steiner.make_a_orm.column.date.TimestampColumn;
-import com.steiner.make_a_orm.column.numeric.*;
+import com.steiner.make_a_orm.column.number.*;
 import com.steiner.make_a_orm.column.string.CharacterColumn;
 import com.steiner.make_a_orm.column.string.CharacterVaryingColumn;
 import com.steiner.make_a_orm.column.string.TextColumn;

@@ -70,4 +70,21 @@ class TestGroupBy {
             }
         }
     }
+
+    @Test
+    fun testSelectGroupBy() {
+        transaction(database) {
+            with (Employees) {
+                select(department, salary.sum(), salary.avg())
+                    .groupBy(department)
+                    .forEach {
+                        val dept = it[department]
+                        val sum = it[salary.sum()]
+                        val avg = it.get(salary.avg())
+
+                        println("dept: $dept, sum: $sum, avg: $avg")
+                    }
+            }
+        }
+    }
 }

@@ -2,7 +2,7 @@ package com.steiner.make_a_orm.key;
 
 import com.steiner.make_a_orm.Errors;
 import com.steiner.make_a_orm.column.Column;
-import com.steiner.make_a_orm.column.numeric.NumberColumn;
+import com.steiner.make_a_orm.column.number.NumberColumn;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.util.Quote;
 import jakarta.annotation.Nonnull;

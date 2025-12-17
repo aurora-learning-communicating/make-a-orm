@@ -1,12 +1,10 @@
 package com.steiner.make_a_orm;
 
-import com.steiner.make_a_orm.column.numeric.IntegerColumn;
+import com.steiner.make_a_orm.column.number.IntegerColumn;
 import com.steiner.make_a_orm.column.string.TextColumn;
 import com.steiner.make_a_orm.database.Database;
-import com.steiner.make_a_orm.key.PrimaryKey;
 import com.steiner.make_a_orm.table.impl.IntIdTable;
 import com.steiner.make_a_orm.transaction.Transaction;
-import jakarta.annotation.Nullable;
 import org.junit.jupiter.api.Test;
 import org.postgresql.Driver;
 
