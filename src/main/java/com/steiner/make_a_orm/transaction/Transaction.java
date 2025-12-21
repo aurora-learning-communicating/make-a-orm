@@ -12,6 +12,10 @@ import java.sql.Savepoint;
 
 public class Transaction {
     private static final ThreadLocal<Connection> currentConnection = new ThreadLocal<>();
+    // TODO: add currentTable
+
+    // TODO: add dialect
+
 
     public static void transaction(@Nonnull Database database, @Nonnull Runnable block) {
         @Nullable Connection connection = database.connection;

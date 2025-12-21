@@ -9,8 +9,6 @@ public class Quote {
     public static final String literalFormatter = "'%s'";
     public static final String tableFormatter = "\"%s\"";
     public static final String columnFormatter = "\"%s\"";
-    // public static final String autoIncrement = "auto_increment";
-    public static final String autoIncrement = "";
     public static final String slot = "?";
 
     @Nonnull

@@ -10,6 +10,7 @@ import com.steiner.make_a_orm.column.number.*;
 import com.steiner.make_a_orm.column.string.CharacterColumn;
 import com.steiner.make_a_orm.column.string.CharacterVaryingColumn;
 import com.steiner.make_a_orm.column.string.TextColumn;
+import com.steiner.make_a_orm.vendor.dialect.Dialect;
 import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.key.ForeignKey;
 import com.steiner.make_a_orm.key.PrimaryKey;
@@ -38,25 +39,24 @@ import java.util.stream.Collectors;
 public abstract class Table implements IToSQL {
     @Nonnull
     private final String name;
-
-
     // 不要修改 primaryKey 的获取 顺序，不然就会 因为 初始顺序不对，导致 `idName` 为空
     // 最烦的就是这玩意了，不要再构造函数中调用这些 abstract 方法
     @Nullable
     private PrimaryKey primaryKey;
     private boolean primaryKeyAlreadySet;
-
     @Nonnull
     public List<ForeignKey<?>> foreignKeys;
-
     @Nonnull
     public List<Column<?>> columns;
-
     @Nonnull
     public List<Check> checks;
+    @Nonnull
+    public Dialect dialect;
 
-    public Table(@Nonnull String name) {
+
+    public Table(@Nonnull String name, @Nonnull Dialect dialect) {
         this.name = name;
+        this.dialect = dialect;
         this.foreignKeys = new ArrayList<>();
         this.columns = new ArrayList<>();
         this.checks = new ArrayList<>();
@@ -282,7 +282,7 @@ public abstract class Table implements IToSQL {
         // if columns has primary key
         // if columns has foreign key
         // join with ",\n"
-        String columnDeclarations = columns.stream().map(Column::toSQL).collect(Collectors.joining(",\n\t"));
+        String columnDeclarations = columns.stream().map(column -> column.toSQL()).collect(Collectors.joining(",\n\t"));
         stringBuilder.append(columnDeclarations);
 
         foreignKeys.forEach(foreignKey -> {

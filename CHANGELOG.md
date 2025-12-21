@@ -67,14 +67,14 @@ delete 并加上 where 语句
 
 #### 新增数字字段
 
-- [x] [bigint](./src/main/java/com/steiner/make_a_orm/column/numeric/BigIntColumn.java)
-- [x] [int](./src/main/java/com/steiner/make_a_orm/column/numeric/IntColumn.java)
-- [x] [smallint](./src/main/java/com/steiner/make_a_orm/column/numeric/SmallIntColumn.java)
-- [x] [tinyint](./src/main/java/com/steiner/make_a_orm/column/numeric/TinyIntColumn.java)
+- [x] [bigint](./src/main/java/com/steiner/make_a_orm/column/number/BigIntColumn.java)
+- [x] [int](./src/main/java/com/steiner/make_a_orm/column/number/IntColumn.java)
+- [x] [smallint](./src/main/java/com/steiner/make_a_orm/column/number/SmallIntColumn.java)
+- [x] [tinyint](./src/main/java/com/steiner/make_a_orm/column/number/TinyIntColumn.java)
 - [x] [boolean](./src/main/java/com/steiner/make_a_orm/column/bool/BooleanColumn.java)
-- [x] [float](./src/main/java/com/steiner/make_a_orm/column/numeric/FloatColumn.java)
-- [x] [double](./src/main/java/com/steiner/make_a_orm/column/numeric/DoubleColumn.java)
-- [x] [decimal](./src/main/java/com/steiner/make_a_orm/column/numeric/DecimalColumn.java)
+- [x] [float](./src/main/java/com/steiner/make_a_orm/column/number/FloatColumn.java)
+- [x] [double](./src/main/java/com/steiner/make_a_orm/column/number/DoubleColumn.java)
+- [x] [decimal](./src/main/java/com/steiner/make_a_orm/column/number/DecimalColumn.java)
 
 #### 新增日期字段
 

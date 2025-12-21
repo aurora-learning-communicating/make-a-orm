@@ -4,9 +4,9 @@ import com.steiner.make_a_orm.Errors;
 import com.steiner.make_a_orm.aggregate.Summary;
 import com.steiner.make_a_orm.column.trait.aggregate.ISummary;
 import com.steiner.make_a_orm.column.trait.predicate.*;
+import com.steiner.make_a_orm.vendor.dialect.Dialect;
 import com.steiner.make_a_orm.table.Table;
 import jakarta.annotation.Nonnull;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.PreparedStatement;
@@ -28,12 +28,8 @@ public class TinyIntColumn extends NumberColumn<Byte>
 
     @Nonnull
     @Override
-    public String typeQuote() {
-        if (isAutoIncrement) {
-            return "smallserial";
-        } else {
-            return "tinyint";
-        }
+    public String typeQuote(@Nonnull Dialect dialect) {
+        return dialect.dataTypeProvider.byteType();
     }
 
     @Override
@@ -47,7 +43,7 @@ public class TinyIntColumn extends NumberColumn<Byte>
     }
 
     @Override
-    public @Nullable Byte read(@NotNull ResultSet resultSet) throws SQLException {
+    public @Nullable Byte read(@Nonnull ResultSet resultSet) throws SQLException {
         @Nullable Object value = resultSet.getObject(name);
         if (value == null) {
             return null;

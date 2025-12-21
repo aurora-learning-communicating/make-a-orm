@@ -2,6 +2,7 @@ package com.steiner.make_a_orm.column;
 
 import com.steiner.make_a_orm.IToSQL;
 import com.steiner.make_a_orm.aggregate.Count;
+import com.steiner.make_a_orm.vendor.dialect.Dialect;
 import com.steiner.make_a_orm.exception.SQLBuildException;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.util.DefaultExpression;
@@ -21,12 +22,16 @@ public abstract class Column<T> implements IToSQL {
     @Nonnull
     public abstract String format(@Nonnull T value);
     @Nonnull
-    public abstract String typeQuote();
+    public abstract String typeQuote(@Nonnull Dialect dialect);
     public abstract int sqlType();
     public abstract void write(@Nonnull PreparedStatement statement, int index, @Nonnull T value) throws SQLException;
 
     @Nullable
     public abstract T read(@Nonnull ResultSet resultSet) throws SQLException;
+
+    // dialect
+    @Nonnull
+    public Dialect dialect;
 
     @Nonnull
     public Table fromTable;
@@ -44,6 +49,7 @@ public abstract class Column<T> implements IToSQL {
 
     public Column(@Nonnull String name, @Nonnull Table fromTable) {
         this.name = name;
+        this.dialect = fromTable.dialect;
         this.fromTable = fromTable;
         this.isPrimaryKey = false;
         this.isAutoIncrement = false;
@@ -135,19 +141,14 @@ public abstract class Column<T> implements IToSQL {
     public String toSQL() {
         StringBuilder stringBuilder = new StringBuilder();
         // 1. quote(name) type
-        stringBuilder.append(Quote.quoteColumnStandalone(this))
+        stringBuilder.append(Quote.quoteColumn(this))
                 .append(" ")
-                .append(this.typeQuote());
+                .append(this.typeQuote(dialect));
         // 2. constraint
 
         if (!isNullable) {
             stringBuilder.append(" ")
                     .append("not null");
-        }
-
-        if (isAutoIncrement) {
-            stringBuilder.append(" ")
-                    .append(Quote.autoIncrement);
         }
 
         if (hasDefault()) {
@@ -156,6 +157,7 @@ public abstract class Column<T> implements IToSQL {
                     .append(defaultExpression.toSQL());
         }
 
+        // TODO: this unique ??
         if (isUnique) {
             stringBuilder.append(" ")
                     .append("unique");

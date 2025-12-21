@@ -58,7 +58,7 @@ public class WhereTopStatement implements IToSQL {
         if (statement.otherStatements != null) {
             String others = statement.otherStatements
                     .stream()
-                    .map(WhereStatement::toSQL)
+                    .map(whereStatement -> whereStatement.toSQL())
                     .collect(Collectors.joining(" "));
             stringBuilder.append(" ")
                     .append(others);

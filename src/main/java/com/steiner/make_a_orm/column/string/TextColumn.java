@@ -3,8 +3,10 @@ package com.steiner.make_a_orm.column.string;
 import com.steiner.make_a_orm.column.trait.predicate.IInList;
 import com.steiner.make_a_orm.column.trait.predicate.ILikeColumn;
 import com.steiner.make_a_orm.column.trait.predicate.INullOrNot;
+import com.steiner.make_a_orm.vendor.dialect.Dialect;
 import com.steiner.make_a_orm.table.Table;
 import jakarta.annotation.Nonnull;
+
 import java.sql.Types;
 
 public class TextColumn extends StringColumn
@@ -16,10 +18,10 @@ public class TextColumn extends StringColumn
         super(name, fromTable);
     }
 
-    @Nonnull
     @Override
-    public String typeQuote() {
-        return "text";
+    @Nonnull
+    public String typeQuote(@Nonnull Dialect dialect) {
+        return dialect.dataTypeProvider.textType();
     }
 
     @Override

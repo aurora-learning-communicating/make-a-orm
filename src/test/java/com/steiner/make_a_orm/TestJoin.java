@@ -5,6 +5,7 @@ import com.steiner.make_a_orm.column.string.TextColumn;
 import com.steiner.make_a_orm.database.Database;
 import com.steiner.make_a_orm.table.impl.IntIdTable;
 import com.steiner.make_a_orm.transaction.Transaction;
+import com.steiner.make_a_orm.vendor.dialect.Dialects;
 import org.junit.jupiter.api.Test;
 import org.postgresql.Driver;
 
@@ -24,12 +25,12 @@ public class TestJoin {
 
     @Test
     public void testJoin() {
-        var Customers = new IntIdTable("customers") {
+        var Customers = new IntIdTable("customers", Dialects.PostgreSQL) {
             public final TextColumn name = text("name");
             public final TextColumn email = text("email");
         };
 
-        var Orders = new IntIdTable("orders") {
+        var Orders = new IntIdTable("orders", Dialects.PostgreSQL) {
             public final IntegerColumn customerId = integer("customer_id");
             public final TextColumn product = text("product");
             public final IntegerColumn amount = integer("amount");

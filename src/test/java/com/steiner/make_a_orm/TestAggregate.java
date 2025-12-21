@@ -5,6 +5,7 @@ import com.steiner.make_a_orm.column.string.TextColumn;
 import com.steiner.make_a_orm.database.Database;
 import com.steiner.make_a_orm.table.impl.IntIdTable;
 import com.steiner.make_a_orm.transaction.Transaction;
+import com.steiner.make_a_orm.vendor.dialect.Dialects;
 import org.junit.jupiter.api.Test;
 import org.postgresql.Driver;
 
@@ -37,7 +38,7 @@ public class TestAggregate {
         public final DecimalColumn salary;
 
         public Employees() {
-            super("employees");
+            super("employees", Dialects.PostgreSQL);
 
             name = text("name");
             department = text("department");

@@ -16,6 +16,7 @@ import com.steiner.make_a_orm.table.impl.IntIdTable;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.transaction.Transaction;
 import com.steiner.make_a_orm.unit.TimeUnit;
+import com.steiner.make_a_orm.vendor.dialect.Dialects;
 import com.steiner.make_a_orm.where.statement.WhereStatement;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ public class TestORM {
         public TinyIntColumn column4 = tinyint("byte").withDefault((byte) 2);
 
         public NumberCollectionTable() {
-            super("numbers");
+            super("numbers", Dialects.PostgreSQL);
         }
     }
 
@@ -98,7 +99,7 @@ public class TestORM {
     // TODO: 1. 测试 格式化SQL 输出
     @Test
     public void testFormatSQL() {
-        var users = new IntIdTable("users") {
+        var users = new IntIdTable("users", Dialects.PostgreSQL) {
             CharacterVaryingColumn name = characterVarying("name", 50).withDefault("unnamed");
             CharacterVaryingColumn password = characterVarying("password", 50);
             CharacterVaryingColumn email = characterVarying("email", 100).nullable();
@@ -120,7 +121,7 @@ public class TestORM {
             CharacterVaryingColumn password;
 
             public Users() {
-                super("users");
+                super("users", Dialects.PostgreSQL);
                 this.name = characterVarying("name", 50);
                 this.password = characterVarying("password", 50);
             }
@@ -136,7 +137,7 @@ public class TestORM {
     // TODO: 3. 测试 外键
     @Test
     public void testForeignKey() {
-        var scores = new IntIdTable("scores") {
+        var scores = new IntIdTable("scores", Dialects.PostgreSQL) {
             IntegerColumn score = integer("score").uniqueIndex();
         };
 
@@ -146,7 +147,7 @@ public class TestORM {
             ForeignKey<IntegerColumn> score;
 
             public Users() {
-                super("users");
+                super("users", Dialects.PostgreSQL);
                 this.name = characterVarying("name", 50);
                 this.password = characterVarying("password", 50);
                 this.score = reference("score", scores.score);
@@ -167,7 +168,7 @@ public class TestORM {
     // TODO: 测试 check 限制
     @Test
     public void testCheck() {
-        var table = new IntIdTable("items") {
+        var table = new IntIdTable("items", Dialects.PostgreSQL) {
             IntegerColumn value1 = integer("value1");
             IntegerColumn value2 = integer("value2").check("ck_1", (column) -> column.greater(1));
             CharacterVaryingColumn value3 = characterVarying("value3", 20).check("ck_2", (column) -> column.like("%hello%"));
@@ -252,7 +253,7 @@ public class TestORM {
         TimeColumn time = time("time");
 
         public Times() {
-            super("times");
+            super("times", Dialects.PostgreSQL);
         }
     }
 

@@ -4,9 +4,9 @@ import com.steiner.make_a_orm.Errors;
 import com.steiner.make_a_orm.aggregate.Summary;
 import com.steiner.make_a_orm.column.trait.aggregate.ISummary;
 import com.steiner.make_a_orm.column.trait.predicate.*;
+import com.steiner.make_a_orm.vendor.dialect.Dialect;
 import com.steiner.make_a_orm.table.Table;
 import jakarta.annotation.Nonnull;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
@@ -27,13 +27,13 @@ public class BigIntColumn extends NumberColumn<Long>
         super(name, fromTable);
     }
 
-    @Nonnull
     @Override
-    public String typeQuote() {
+    @Nonnull
+    public String typeQuote(@Nonnull Dialect dialect) {
         if (isAutoIncrement) {
-            return "bigserial";
+            return dialect.dataTypeProvider.longAutoIncrementType();
         } else {
-            return "bigint";
+            return dialect.dataTypeProvider.longType();
         }
     }
 
@@ -48,7 +48,7 @@ public class BigIntColumn extends NumberColumn<Long>
     }
 
     @Override
-    public @Nullable Long read(@NotNull ResultSet resultSet) throws SQLException {
+    public @Nullable Long read(@Nonnull ResultSet resultSet) throws SQLException {
         @Nullable Object value = resultSet.getObject(name);
         if (value == null) {
             return null;

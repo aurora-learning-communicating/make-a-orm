@@ -30,7 +30,7 @@ public class ForeignKey<T extends Column<?>> extends Key {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(name)
                 .append(" ")
-                .append(referenceColumn.typeQuote())
+                .append(referenceColumn.typeQuote(referenceColumn.dialect))
                 .append(" ");
 
         if (isNullable) {

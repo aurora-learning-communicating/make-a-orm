@@ -4,9 +4,9 @@ import com.steiner.make_a_orm.Errors;
 import com.steiner.make_a_orm.aggregate.Summary;
 import com.steiner.make_a_orm.column.trait.aggregate.ISummary;
 import com.steiner.make_a_orm.column.trait.predicate.*;
+import com.steiner.make_a_orm.vendor.dialect.Dialect;
 import com.steiner.make_a_orm.table.Table;
 import jakarta.annotation.Nonnull;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.PreparedStatement;
@@ -28,8 +28,8 @@ public class FloatColumn extends NumberColumn<Float>
 
     @Nonnull
     @Override
-    public String typeQuote() {
-        return "real";
+    public String typeQuote(@Nonnull Dialect dialect) {
+        return dialect.dataTypeProvider.floatType();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class FloatColumn extends NumberColumn<Float>
     }
 
     @Override
-    public @Nullable Float read(@NotNull ResultSet resultSet) throws SQLException {
+    public @Nullable Float read(@Nonnull ResultSet resultSet) throws SQLException {
         @Nullable Object value = resultSet.getObject(name);
         if (value == null) {
             return null;

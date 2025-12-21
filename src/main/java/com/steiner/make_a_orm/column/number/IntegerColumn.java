@@ -7,9 +7,9 @@ import com.steiner.make_a_orm.column.trait.predicate.ICompare;
 import com.steiner.make_a_orm.column.trait.predicate.IEqual;
 import com.steiner.make_a_orm.column.trait.predicate.IInList;
 import com.steiner.make_a_orm.column.trait.predicate.INullOrNot;
+import com.steiner.make_a_orm.vendor.dialect.Dialect;
 import com.steiner.make_a_orm.table.Table;
 import jakarta.annotation.Nonnull;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.PreparedStatement;
@@ -31,11 +31,11 @@ public class IntegerColumn extends NumberColumn<Integer>
 
     @Nonnull
     @Override
-    public String typeQuote() {
+    public String typeQuote(@Nonnull Dialect dialect) {
         if (isAutoIncrement) {
-            return "serial";
+            return dialect.dataTypeProvider.integerAutoIncrementType();
         } else {
-            return "integer";
+            return dialect.dataTypeProvider.integerType();
         }
 
     }
@@ -51,7 +51,7 @@ public class IntegerColumn extends NumberColumn<Integer>
     }
 
     @Override
-    public @Nullable Integer read(@NotNull ResultSet resultSet) throws SQLException {
+    public @Nullable Integer read(@Nonnull ResultSet resultSet) throws SQLException {
         @Nullable Object value = resultSet.getObject(name);
         if (value == null) {
             return null;

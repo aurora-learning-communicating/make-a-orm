@@ -21,6 +21,10 @@ public class Errors {
 
     public static SQLBuildException ForeignKeyError = new SQLBuildException("cannot create foreign key on a non-primary or non-unique column");
     public static SQLBuildException MultiAutoIncrement = new SQLBuildException("cannot be multi autoincrement column");
+    public static SQLBuildException MismatchedAutoIncrementType(int type) {
+        return new SQLBuildException("cannot set auto increment with this sql type: %s".formatted(type));
+    }
+
     public static SQLBuildException ReferenceSelf = new SQLBuildException("cannot reference self table");
 
     public static SQLBuildException PrimaryNotNull = new SQLBuildException("consider that value of primary key cannot be null, so I forbid this case, cannot set the primary key with null");

@@ -2,6 +2,7 @@ package com.steiner.make_a_orm.column.date;
 
 import com.steiner.make_a_orm.column.Column;
 import com.steiner.make_a_orm.column.trait.predicate.*;
+import com.steiner.make_a_orm.vendor.dialect.Dialect;
 import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.util.Quote;
 import jakarta.annotation.Nonnull;
@@ -28,10 +29,10 @@ public class DateColumn extends Column<java.time.LocalDate>
         return Quote.quoteString(value.toString());
     }
 
-    @Nonnull
     @Override
-    public String typeQuote() {
-        return "date";
+    @Nonnull
+    public  String typeQuote(@Nonnull Dialect dialect) {
+        return dialect.dataTypeProvider.dateType();
     }
 
     @Override

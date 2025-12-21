@@ -236,7 +236,7 @@ public class GroupByStatement implements Spliterator<ResultRow>, IToSQL {
         String byColumnName = Quote.quoteColumnStandalone(Objects.requireNonNull(byColumn));
         String aggregateNames = aggregates
                 .stream()
-                .map(IToSQL::toSQL)
+                .map(aggregate -> aggregate.toSQL())
                 .collect(Collectors.joining(", "));
 
         @Nullable String sliceNames = null;

@@ -4,9 +4,9 @@ import com.steiner.make_a_orm.Errors;
 import com.steiner.make_a_orm.aggregate.Summary;
 import com.steiner.make_a_orm.column.trait.aggregate.ISummary;
 import com.steiner.make_a_orm.column.trait.predicate.*;
+import com.steiner.make_a_orm.vendor.dialect.Dialect;
 import com.steiner.make_a_orm.table.Table;
 import jakarta.annotation.Nonnull;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.PreparedStatement;
@@ -28,8 +28,8 @@ public class DoubleColumn extends NumberColumn<Double>
 
     @Nonnull
     @Override
-    public String typeQuote() {
-        return "double precision";
+    public String typeQuote(@Nonnull Dialect dialect) {
+        return dialect.dataTypeProvider.doubleType();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class DoubleColumn extends NumberColumn<Double>
     }
 
     @Override
-    public @Nullable Double read(@NotNull ResultSet resultSet) throws SQLException {
+    public @Nullable Double read(@Nonnull ResultSet resultSet) throws SQLException {
         @Nullable Object value = resultSet.getObject(name);
         if (value == null) {
             return null;

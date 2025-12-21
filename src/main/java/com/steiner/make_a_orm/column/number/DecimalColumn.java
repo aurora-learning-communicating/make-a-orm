@@ -3,6 +3,7 @@ package com.steiner.make_a_orm.column.number;
 import com.steiner.make_a_orm.aggregate.Summary;
 import com.steiner.make_a_orm.column.trait.aggregate.ISummary;
 import com.steiner.make_a_orm.column.trait.predicate.*;
+import com.steiner.make_a_orm.vendor.dialect.Dialect;
 import com.steiner.make_a_orm.table.Table;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -22,8 +23,8 @@ public class DecimalColumn extends NumberColumn<BigDecimal>
         INullOrNot<BigDecimal, DecimalColumn>,
         ISummary<BigDecimal, BigDecimal> {
 
-    int precision;
-    int scale;
+    public int precision;
+    public int scale;
 
     public DecimalColumn(@Nonnull String name, @Nonnull Table fromTable, int precision, int scale) {
         super(name, fromTable);
@@ -33,9 +34,9 @@ public class DecimalColumn extends NumberColumn<BigDecimal>
     }
 
 
-    @Nonnull
     @Override
-    public String typeQuote() {
+    @Nonnull
+    public String typeQuote(@Nonnull Dialect dialect) {
         return "decimal(%s, %s)".formatted(precision, scale);
     }
 

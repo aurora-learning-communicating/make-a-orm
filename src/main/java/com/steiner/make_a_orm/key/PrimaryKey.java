@@ -7,6 +7,7 @@ import com.steiner.make_a_orm.table.Table;
 import com.steiner.make_a_orm.util.Quote;
 import jakarta.annotation.Nonnull;
 
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +29,12 @@ public abstract class PrimaryKey extends Key {
         }
 
         public <N extends NumberColumn<?>> Single<N> autoIncrement() {
+            int sqlType = fromColumn.sqlType();
+
+            if (sqlType != Types.INTEGER && sqlType != Types.BIGINT) {
+                throw Errors.MismatchedAutoIncrementType(sqlType);
+            }
+
             fromColumn.isAutoIncrement = true;
             return (Single<N>) this;
         }
