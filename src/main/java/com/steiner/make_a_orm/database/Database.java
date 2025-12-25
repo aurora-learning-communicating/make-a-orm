@@ -52,7 +52,7 @@ public class Database {
         }
     }
 
-    public static Database builder(Consumer<Builder> consumer) {
+    public static Database builder(@Nonnull Consumer<Builder> consumer) {
         Builder builder = new Builder();
         consumer.accept(builder);
         return builder.build();

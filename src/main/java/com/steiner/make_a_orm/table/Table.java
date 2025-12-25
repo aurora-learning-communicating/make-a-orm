@@ -282,7 +282,7 @@ public abstract class Table implements IToSQL {
         // if columns has primary key
         // if columns has foreign key
         // join with ",\n"
-        String columnDeclarations = columns.stream().map(column -> column.toSQL()).collect(Collectors.joining(",\n\t"));
+        String columnDeclarations = columns.stream().map(Column::toSQL).collect(Collectors.joining(",\n\t"));
         stringBuilder.append(columnDeclarations);
 
         foreignKeys.forEach(foreignKey -> {

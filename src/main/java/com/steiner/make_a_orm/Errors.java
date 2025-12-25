@@ -11,6 +11,8 @@ import jakarta.annotation.Nonnull;
 import java.sql.SQLException;
 
 public class Errors {
+    public static SQLBuildException CreateTableError = new SQLBuildException("create table failed");
+    public static SQLBuildException DropTableError = new SQLBuildException("drop table failed");
     public static SQLBuildException BothDefaultAndAutoIncrement = new SQLBuildException("cannot both set default and autoincrement");
     public static SQLBuildException NotNullable = new SQLBuildException("cannot set default null while it is not nullable");
     public static SQLBuildException SetOnPrimary = new SQLBuildException("do not set value on a primary key and autoincrement column");

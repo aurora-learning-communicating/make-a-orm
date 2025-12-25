@@ -42,7 +42,7 @@ public abstract class PrimaryKey extends Key {
         @Nonnull
         @Override
         public String toSQL() {
-            return "primary key (%s)".formatted(Quote.quoteColumnStandalone(fromColumn));
+            return "primary key (%s)".formatted(Quote.quoteColumn(fromColumn));
         }
     }
 
